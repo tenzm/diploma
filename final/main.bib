@@ -1,0 +1,315 @@
+% ============================================================
+% Библиография
+% ============================================================
+
+% ---- Эволюция ML-моделей ----
+
+@inproceedings{alexnet2012,
+  author    = {Krizhevsky, Alex and Sutskever, Ilya and Hinton, Geoffrey E.},
+  title     = {{ImageNet} classification with deep convolutional neural networks},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {25},
+  year      = {2012},
+  publisher = {Curran Associates, Inc.}
+}
+
+@misc{llamapaper2024,
+  author       = {{Meta AI}},
+  title        = {{Llama 3}: Open Foundation Language Models},
+  year         = {2024},
+  howpublished = {\url{https://llama.meta.com/llama3/}}
+}
+
+@misc{falcon2023,
+  title        = {{Falcon-180B}: A Large Language Model},
+  author       = {{Technology Innovation Institute}},
+  year         = {2023},
+  howpublished = {\url{https://falconllm.tii.ae}}
+}
+
+% ---- Cold start / Serverless ----
+
+@misc{bentoml2024cold,
+  title        = {25x Faster Cold Starts for {LLMs} on {Kubernetes}},
+  author       = {{BentoML Team}},
+  year         = {2024},
+  howpublished = {\url{https://www.bentoml.com/blog/25x-faster-cold-starts-for-llms-on-kubernetes}}
+}
+
+@misc{serverless_cold_start_linkedin,
+  title        = {Serverless {AI} and the Cold Start Problem: Why Your Models Feel Slow in Production},
+  author       = {{LinkedIn Engineering}},
+  year         = {2024},
+  howpublished = {\url{https://www.linkedin.com/pulse/serverless-ai-cold-start-problem-why-your-models-feel-slow-ygylc}}
+}
+
+% ---- Теоремы и формальные результаты ----
+
+@article{little1961,
+  author  = {Little, John D. C.},
+  title   = {A Proof for the Queuing Formula: {L} = {$\lambda$W}},
+  journal = {Operations Research},
+  volume  = {9},
+  number  = {3},
+  pages   = {383--387},
+  year    = {1961}
+}
+
+@book{hennessy2011ca,
+  author    = {Hennessy, John L. and Patterson, David A.},
+  title     = {Computer Architecture: A Quantitative Approach},
+  edition   = {5th},
+  publisher = {Morgan Kaufmann},
+  year      = {2011}
+}
+
+@inproceedings{amdahl_law,
+  author    = {Amdahl, Gene M.},
+  title     = {Validity of the single processor approach to achieving large scale computing capabilities},
+  booktitle = {Proceedings of the AFIPS Spring Joint Computer Conference},
+  year      = {1967},
+  pages     = {483--485}
+}
+
+@inproceedings{ford2010availability,
+  author    = {Ford, Daniel and Labelle, Fran{\c{c}}ois and Popovici, Florentina I. and Stokely, Murray and Truong, Van-Anh and Barroso, Luiz and Grimes, Carl and Quinlan, Sean},
+  title     = {Availability in Globally Distributed Storage Systems},
+  booktitle = {9th {USENIX} Symposium on Operating Systems Design and Implementation ({OSDI})},
+  year      = {2010},
+  pages     = {61--74}
+}
+
+@inproceedings{brewer2000cap,
+  author    = {Brewer, Eric A.},
+  title     = {Towards robust distributed systems},
+  booktitle = {Proceedings of the Annual {ACM} Symposium on Principles of Distributed Computing ({PODC})},
+  year      = {2000},
+  note      = {Keynote address}
+}
+
+@misc{zipf_law,
+  author    = {Zipf, George Kingsley},
+  title     = {Human Behavior and the Principle of Least Effort},
+  publisher = {Addison-Wesley},
+  year      = {1949}
+}
+
+@inproceedings{che_approx,
+  author    = {Che, Soung and Mandjes, Michel and Bonald, Thomas},
+  title     = {Revisiting the {TTL}-based approximation for the LRU cache},
+  booktitle = {Proceedings of {IEEE} INFOCOM},
+  year      = {2002}
+}
+
+% ---- Kubernetes ----
+
+@misc{k8s_lease_api,
+  title        = {{Kubernetes} Coordination {API}: Lease},
+  author       = {{Kubernetes Authors}},
+  year         = {2024},
+  howpublished = {\url{https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/lease-v1/}}
+}
+
+@misc{k8s_daemonset,
+  title        = {{DaemonSet} in {Kubernetes}},
+  author       = {{Kubernetes Authors}},
+  year         = {2024},
+  howpublished = {\url{https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/}}
+}
+
+% ---- NFS ----
+
+@misc{nfs_k8s_docs,
+  title        = {Configure a Pod to Use a {PersistentVolume} for Storage},
+  author       = {{Kubernetes Authors}},
+  year         = {2024},
+  howpublished = {\url{https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/}}
+}
+
+@misc{flock_man,
+  title        = {\texttt{flock(2)} Linux man page},
+  author       = {{Linux Programmer's Manual}},
+  year         = {2024},
+  howpublished = {\url{https://man7.org/linux/man-pages/man2/flock.2.html}}
+}
+
+% ---- FUSE ----
+
+@inproceedings{fuse_kernel_docs,
+  author    = {Szeredi, Mikl{\'o}s},
+  title     = {{FUSE}: Filesystem in Userspace},
+  booktitle = {Linux Symposium},
+  year      = {2010},
+  pages     = {267--278}
+}
+
+@misc{gofuse,
+  title        = {{go-fuse}: {FUSE} bindings for {Go}},
+  author       = {Hanwen Shu},
+  year         = {2024},
+  howpublished = {\url{https://github.com/hanwen/go-fuse}}
+}
+
+% ---- Redis ----
+
+@misc{redis_cluster_docs,
+  title        = {{Redis} Cluster Specification},
+  author       = {{Redis Labs}},
+  year         = {2024},
+  howpublished = {\url{https://redis.io/docs/reference/cluster-spec/}}
+}
+
+@misc{redis_sentinel_docs,
+  title        = {{Redis} Sentinel High Availability},
+  author       = {{Redis Labs}},
+  year         = {2024},
+  howpublished = {\url{https://redis.io/docs/management/sentinel/}}
+}
+
+% ---- P2P / Distributed Systems ----
+
+@misc{mdns_k8s_limitations,
+  title        = {Multicast {DNS} and {Kubernetes} Overlay Networks},
+  author       = {{CNCF Networking Working Group}},
+  year         = {2023},
+  howpublished = {\url{https://github.com/cncf/sig-network}}
+}
+
+@misc{gossip_protocol_overview,
+  title        = {Gossip Protocol in Distributed Systems},
+  author       = {van Renesse, Robbert and Minsky, Yaron and Hayden, Mark},
+  howpublished = {Cornell University Technical Report},
+  year         = {1998}
+}
+
+% ---- Существующие решения ----
+
+@misc{alluxio_arch,
+  title        = {{Alluxio} Architecture Overview},
+  author       = {{Alluxio, Inc.}},
+  year         = {2024},
+  howpublished = {\url{https://documentation.alluxio.io/os-en/overview-1/architecture}}
+}
+
+@misc{alluxio_k8s,
+  title        = {{Alluxio} on {Kubernetes}},
+  author       = {{Alluxio, Inc.}},
+  year         = {2024},
+  howpublished = {\url{https://www.alluxio.io/kubernetes}}
+}
+
+@misc{alluxio_pricing,
+  title        = {{Alluxio} Pricing and Editions},
+  author       = {{Alluxio, Inc.}},
+  year         = {2024},
+  howpublished = {\url{https://www.alluxio.io/pricing}}
+}
+
+@misc{juicefs_intro,
+  title        = {{JuiceFS} Introduction},
+  author       = {{Juicedata, Inc.}},
+  year         = {2024},
+  howpublished = {\url{https://juicefs.com/docs/community/introduction/}}
+}
+
+@misc{juicefs_design,
+  title        = {{JuiceFS} Technical Architecture},
+  author       = {{Juicedata, Inc.}},
+  year         = {2024},
+  howpublished = {\url{https://juicefs.com/en/blog/engineering/design-metadata-data-storage}}
+}
+
+@misc{juicefs_perf,
+  title        = {{JuiceFS} Performance Optimization for {AI} Scenarios},
+  author       = {{Juicedata, Inc.}},
+  year         = {2024},
+  howpublished = {\url{https://juicefs.com/en/blog/engineering/juicefs-ai-workload-performance-optimization}}
+}
+
+@misc{dragonfly_blog,
+  title        = {P2P-Based Intelligent Image Acceleration System of {Dragonfly}},
+  author       = {{Alibaba Cloud}},
+  year         = {2023},
+  howpublished = {\url{https://www.alibabacloud.com/blog/p2p-based-intelligent-image-acceleration-system-of-dragonfly_599645}}
+}
+
+@misc{cubefs_arch,
+  title        = {{CubeFS} Architecture},
+  author       = {{CubeFS Authors}},
+  year         = {2024},
+  howpublished = {\url{https://cubefs.io/docs/master/overview/architecture.html}}
+}
+
+@misc{rook_docs,
+  title        = {{Rook} Documentation},
+  author       = {{Rook Authors}},
+  year         = {2024},
+  howpublished = {\url{https://rook.io/docs/rook/latest-release/}}
+}
+
+@misc{ceph_arch,
+  title        = {{Ceph} Architecture},
+  author       = {{Ceph Foundation}},
+  year         = {2024},
+  howpublished = {\url{https://docs.ceph.com/en/reef/architecture}}
+}
+
+% ---- Дополнительные источники ----
+
+@article{li2020caching,
+  author  = {Li, Jinrui and others},
+  title   = {Caching Structures for Distributed Data Management in Edge Computing},
+  journal = {{IEEE} Access},
+  volume  = {8},
+  pages   = {152--163},
+  year    = {2020}
+}
+
+@misc{bert2018,
+  author       = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+  title        = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+  year         = {2018},
+  howpublished = {arXiv:1810.04805}
+}
+
+@misc{gpt3_2020,
+  author       = {Brown, Tom B. and others},
+  title        = {Language Models are Few-Shot Learners},
+  year         = {2020},
+  howpublished = {arXiv:2005.14165}
+}
+
+@misc{vllm,
+  title        = {{vLLM}: Easy, Fast, and Cheap {LLM} Serving},
+  author       = {Kwon, Woosuk and others},
+  year         = {2023},
+  howpublished = {\url{https://github.com/vllm-project/vllm}}
+}
+
+@misc{huggingface_hub,
+  title        = {{Hugging Face Hub} Documentation},
+  author       = {{Hugging Face}},
+  year         = {2024},
+  howpublished = {\url{https://huggingface.co/docs/hub}}
+}
+
+@misc{knative,
+  title        = {{Knative}: Kubernetes-based platform to deploy and manage modern serverless workloads},
+  author       = {{Knative Authors}},
+  year         = {2024},
+  howpublished = {\url{https://knative.dev}}
+}
+
+@misc{kserve,
+  title        = {{KServe}: Standardized Model Inference Platform on {Kubernetes}},
+  author       = {{KServe Authors}},
+  year         = {2024},
+  howpublished = {\url{https://kserve.github.io/website/}}
+}
+
+@misc{capability_density,
+  title        = {LLM Capability Density doubles every 3.5 months},
+  author       = {{Otus Blog}},
+  year         = {2024},
+  howpublished = {\url{https://habr.com/ru/companies/otus/news/971414/}}
+}

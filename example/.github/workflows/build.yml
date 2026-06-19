@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - dev/*
+      - release/*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Generate PDFs
+      uses: addnab/docker-run-action@v3
+      with:
+        image: gametwix/latex-builder:latest
+        registry: docker.io
+        options: -v ${{ github.workspace }}:/doc:Z
+        run: |
+          latexmk -xelatex -pdf -jobname=master-diploma main.tex
+          latexmk -c -jobname=master-diploma
+      
+    - name: Verify PDF exists
+      run: |
+        ls -la ${{ github.workspace }}
+        test -f ${{ github.workspace }}/master-diploma.pdf || exit 1
+        
+    - name: Create GitHub release with artifacts
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          master-diploma.pdf
+        tag_name: ${{ github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

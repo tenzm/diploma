@@ -1,0 +1,59 @@
+\documentclass[master, fontsize=14]{diploma}
+
+\student{Блинов Максим Алексеевич}
+\group{М8О-209СВ-24}
+\theme{Оптимизация холодного старта и масштабирования моделей машинного обучения в бессерверном инференсе для обеспечения надежности и высокой доступности}
+
+\supervisor{Булакина Мария Борисовна}
+\firstConsultant{---}
+\secondConsultant{---}
+\reviewer{---}
+
+\faculty{№ 8 <<Компьютерные науки и прикладная математика>>}
+\department{806}
+\speciality{02.04.02 <<Фундаментальная информатика и информационные технологии>>}
+\profile{Информатика}
+
+\departmentFullName{№ 806}
+\headOfDepartment{Крылов Сергей Сергеевич}
+
+% Дата. Оставляем пустое место для дня
+\date{\uline{\hspace{24pt}} мая \the\year\ года}
+
+\input{contents/glossary}
+
+\usepackage{booktabs}
+
+\addbibresource{main.bib}
+
+% Иллюстрации всегда по центру
+\makeatletter
+\g@addto@macro\@floatboxreset\centering
+\makeatother
+
+\begin{document}
+    \maketitle
+
+    % \includepdf[pages=-]{extra/task} % Задание
+    \setcounter{page}{2} % Устанавливает счётчик страниц
+
+    \input{contents/0-abstract} % Реферат
+
+    \tableofcontents % Содержание
+    \input{contents/terms}         % Термины и определения
+    \input{contents/abbreviations} % Перечень сокращений и обозначений
+
+    \include{contents/1-introduction} % Введение
+
+    \include{contents/1_1-cold-start-problem}
+    \include{contents/2_1-existing-solutions}
+    \include{contents/3_1-nfs-stage}
+    \include{contents/4_1-p2p-fuse-architecture}
+    \include{contents/5_1-evaluation}
+
+    \include{contents/6-conclusion} % Заключение
+
+    \printbibliography % Список литературы
+
+    \appendix % Приложения
+\end{document}
