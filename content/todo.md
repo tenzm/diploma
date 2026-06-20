@@ -759,6 +759,34 @@ Redis heartbeat:
 - Регистрация чанка после записи.
 - Eviction policy.
 
+### 7.5a. Многоуровневый кэш storage-agent: in-memory SLRU, write-behind queue, persistent disk
+
+Ориентировочный объем: **2-2.5 страницы**.
+
+Описать реализованную в коде иерархию кэша:
+
+- L0 (горячий уровень, RAM): SLRU in-memory чанк-кэш — двусвязный список + два map, вытеснение по байтам с хвоста. Обслуживает повторные обращения к одним и тем же чанкам без дискового I/O.
+- L1 (диск): файловый кэш — один файл на чанк, иерархия директорий. Атомарная запись через temp + `os.Rename`. Асинхронная запись через write-behind queue (буферизованный канал + worker-горутины).
+- L2 (метаданные): Redis-кэш метаданных файла (`FileMetadata`) — второй уровень для метаданных, дополняющий in-memory map.
+- Fallback (L3): внешний реестр (HuggingFace) при промахе всех уровней.
+
+Раскрыть компромиссы:
+- LRU vs LFU vs ARC для in-memory уровня (почему ARC предпочтителен при смешанной нагрузке).
+- Write-behind queue: decoupling записи от пути чтения; риск потери данных при падении процесса (допустимо, т.к. чанки восстановимы из registry).
+- Почему SQLite metadata index лучше `atime`-based вытеснения для структурированного LRU на диске.
+
+Использовать:
+- `projects/surf-fs/storage-agent/internal/cache/slru/`
+- `projects/surf-fs/storage-agent/internal/repository/localstorage/`
+- `projects/surf-fs/storage-agent/internal/service/storage-gateway/service.go`
+- `projects/surf-fs/storage-agent/internal/service/storage-gateway/read.go`
+- `cache/todo.md` — списки кэшей и псевдокод
+
+Включить:
+- Схему трёхуровневого кэша: SLRU → disk → external.
+- Краткий псевдокод write-behind queue и атомарного write.
+- Обоснование выбора файлового кэша перед BadgerDB/BoltDB для больших бинарных чанков.
+
 ### 7.6. `storage-mounter`: FUSE-клиент для виртуальной файловой системы
 
 Ориентировочный объем: **4-5 страниц**.
@@ -799,6 +827,34 @@ Redis heartbeat:
 - Нарезка диапазона чтения на chunk ids.
 - Предзагрузка соседних чанков при последовательном чтении.
 - Обработка ошибок и fallback.
+
+### 7.6a. Кэш и буферизация чтения в storage-mounter: ring buffer, prefetcher, byte pool
+
+Ориентировочный объем: **2-2.5 страницы**.
+
+Описать реализованную в коде многоуровневую буферизацию:
+
+- **Streaming ring buffer** (`internal/cache/streaming/`): кольцевой буфер фиксированной ёмкости, индекс `chunkId % capacity`. O(1) Get/Set. Верификация попадания по `chunk.Id == chunkId` (защита от коллизий). Оптимален для последовательного чтения одного файла.
+- **Prefetcher** (`pkg/prefetcher/`): при каждом `Read(chunkId)` асинхронно запускает горутины для следующих `prefetchAhead-1` чанков. Использует `singleflight.Group` для исключения дублирующихся конкурентных загрузок одного чанка (thundering herd prevention). Параллелизм ограничивается `prefetchParallelism`.
+- **Byte buffer pool** (`internal/pool/`): мультиразмерный `sync.Pool`. Для каждого уникального `chunkSize` — отдельный пул. Устраняет `make([]byte, chunkSize)` при каждом запросе, снижая нагрузку на GC.
+- **In-memory metadata cache** (`internal/cache/metadata/`): unbounded map для `FileMetadata`, с поддержкой cascade delete по ревизии модели.
+
+Раскрыть компромиссы:
+- Ring buffer оптимален для sequential single-file паттерна (ML-загрузка весов); при multi-file (несколько .safetensors шардов) даёт коллизии → нужен per-file LRU.
+- Prefetcher скрывает I/O latency за временем GPU-обработки текущего чанка.
+- sync.Pool критичен при высоком параллелизме FUSE: без пула каждый syscall read() создаёт большой heap alloc.
+
+Использовать:
+- `projects/surf-fs/storage-mounter/internal/cache/streaming/cache.go`
+- `projects/surf-fs/storage-mounter/pkg/prefetcher/`
+- `projects/surf-fs/storage-mounter/internal/pool/pool.go`
+- `projects/surf-fs/storage-mounter/internal/fuse/model/read.go`
+- `cache/todo.md` — списки кэшей и псевдокод
+
+Включить:
+- Схему потока данных: FUSE Read → prefetcher → ring buffer → chunkReader (UDS/HTTP) → storage-agent.
+- Краткий псевдокод ring buffer с верификацией коллизий.
+- Сравнительный вывод: ring buffer vs per-file LRU для single-file и multi-file сценариев.
 
 ### 7.7. UDS и TCP: разделение локальной и межнодовой коммуникации
 

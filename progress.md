@@ -119,3 +119,31 @@
 - Использованные материалы: все файлы `final/contents/` (0-abstract, terms, abbreviations, 1-introduction, 1_1-cold-start-problem, 2_1-existing-solutions, 3_1-nfs-stage, 4_1-p2p-fuse-architecture, 5_1-evaluation, 6-conclusion); `final/main.bib` (скопирован из `result/main.bib`); Docker-образ diploma-latex на базе Dockerfile из `final/`
 - Ключевые решения: (1) уровни заголовков сдвинуты: `\chapter` → `\section`, `\section` → `\subsection`, `\subsection` → `\subsubsection` — совместимость с diploma.cls на базе article; (2) `\chapter*{...}` → `\structure{...}` для ненумерованных структурных элементов; (3) `\termsanddefenitions` и `\listofabbreviations` заменены на прямые `\input{contents/terms}` и `\input{contents/abbreviations}` для обхода glossaries; (4) добавлен `\usepackage{booktabs}`; (5) исправлены дублированные метки `eq:amat` и `eq:little` в 5_1-evaluation.tex; (6) `language=yaml` → `language=bash` в lstlisting (yaml не определён в listings)
 - Следующий рекомендуемый шаг: открыть `final/main.pdf` и проверить корректность отображения всех разделов, таблиц и формул; заполнить поле `\student{...}` в `final/main.tex` настоящим ФИО студента
+
+## 2026-06-20 — Анализ кэшей storage-agent и storage-mounter; интеграция в диплом
+
+- Статус: выполнено
+- Сгенерировано:
+  1. Проанализированы репозитории `/Workspace/surf-fs/storage-agent` и `/Workspace/surf-fs/storage-mounter`. Текущий этап proxy: сервис `storage-gateway` реализует трёхуровневую цепочку SLRU (L0 RAM) → файловый кэш (L1 диск) → HuggingFace (L2 external); write-behind async queue через канал. `storage-mounter` имеет: streaming ring buffer (`chunkId % capacity`), prefetcher с look-ahead + singleflight, мультиразмерный sync.Pool.
+  2. Добавлены подразделы 7.5a и 7.6a в `content/todo.md`.
+  3. Создан файл `cache/todo.md` — два списка валидных кэшей с псевдокодом на Go и итоговой рекомендацией.
+  4. Добавлены два новых подраздела в `result/contents/4_1-p2p-fuse-architecture.tex`: «Многоуровневый кэш storage-agent» и «Кэш и буферизация чтения в storage-mounter».
+- Файлы:
+  - `cache/todo.md` (создан)
+  - `content/todo.md` (обновлён — добавлены 7.5a, 7.6a)
+  - `result/contents/4_1-p2p-fuse-architecture.tex` (расширен — +828 слов)
+- Основание из плана: `content/todo.md` — новые пп. 7.5a, 7.6a; анализ кода проекта из `projects/surf-fs/`
+- Использованные материалы:
+  - `storage-agent/internal/cache/slru/` — SLRU in-memory кэш
+  - `storage-agent/internal/cache/metadata/` — metadata in-memory cache
+  - `storage-agent/internal/repository/localstorage/` — файловый кэш на диске
+  - `storage-agent/internal/service/storage-gateway/` — proxy-сервис, цепочка кэшей
+  - `storage-mounter/internal/cache/streaming/` — ring buffer
+  - `storage-mounter/pkg/prefetcher/` — prefetcher + singleflight
+  - `storage-mounter/internal/pool/` — sync.Pool byte pool
+  - `storage-mounter/internal/fuse/model/read.go` — FUSE read path
+- Ключевые решения:
+  - storage-agent: файловый кэш (temp+rename) предпочтительнее LSM/B-tree для чанков 16–128 МБ; ARC лучше LRU при смешанной нагрузке; SQLite WAL — расширение для структурированного вытеснения
+  - storage-mounter: ring buffer оптимален для sequential single-file; per-file LRU нужен при multi-file (шарды .safetensors); sync.Pool критичен при высоком параллелизме FUSE-горутин
+- Проверка объема: 4_1-p2p-fuse-architecture.tex — words=6313, chars=50901; итого contents: words=20128 (~77 расчётных страниц по 260 слов/стр.)
+- Следующий рекомендуемый шаг: пересобрать PDF в `final/` (скопировать обновлённый `4_1-p2p-fuse-architecture.tex` в `final/contents/` и запустить latexmk)
