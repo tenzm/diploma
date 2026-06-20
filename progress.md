@@ -147,3 +147,34 @@
   - storage-mounter: ring buffer оптимален для sequential single-file; per-file LRU нужен при multi-file (шарды .safetensors); sync.Pool критичен при высоком параллелизме FUSE-горутин
 - Проверка объема: 4_1-p2p-fuse-architecture.tex — words=6313, chars=50901; итого contents: words=20128 (~77 расчётных страниц по 260 слов/стр.)
 - Следующий рекомендуемый шаг: пересобрать PDF в `final/` (скопировать обновлённый `4_1-p2p-fuse-architecture.tex` в `final/contents/` и запустить latexmk)
+
+## 2026-06-20 13:11 — Генерация финального PDF с 6 встроенными графиками
+
+- Статус: выполнено
+- Сгенерировано: финальный PDF диплома `result/main.pdf` (108 страниц, 828 КБ) со всеми 6 графиками
+- Файлы: `result/main.pdf`, `result/figures/` (6 PNG), `final/main.pdf`, `final/figures/` (синхронизированы)
+- Основание из плана: завершение задачи «определи местоположение графиков в плане диплома, добавь туда соответствующие пункты и добавь в структуру latex нужные картинки для вставки, после чего сгенерируй новый диплом»
+- Использованные материалы: `pptx/generate3.py` (источник PNG), `result/contents/*.tex` (места вставки фигур), `result/main.tex` (fontspec/polyglossia для XeTeX)
+- Ключевые решения:
+  - Устранена несовместимость XeTeX с T2A/inputenc/babel: заменено на fontspec + polyglossia + Liberation fonts
+  - Stale biblatex `.bbl` удалён вручную; bibtex успешно отработал с unsrtnat
+  - Все 6 графиков (`chart_model_sizes`, `chart_cold_start_breakdown`, `chart_availability`, `chart_tmodel_ready`, `chart_external_traffic`, `chart_reliability`) подтверждены в логе сборки
+  - Итог: 4 missing chars (несущественно), 108 страниц, библиография разрешена
+- Следующий рекомендуемый шаг: визуальная проверка PDF (корректность позиционирования графиков, подписей, библиографии)
+
+## 2026-06-20 14:08 — Исправление верстки: шрифт, поля, титульник
+
+- Статус: выполнено
+- Файлы: `result/main.tex`, `result/contents/titlepage.tex`, `result/contents/1_1-cold-start-problem.tex`, `result/contents/2_1-existing-solutions.tex`, `result/contents/4_1-p2p-fuse-architecture.tex`, `result/contents/terms.tex`, `result/main.pdf`
+- Основание из плана: пользователь сообщил о сломанной верстке, выходе текста за поля, отсутствии титульника
+- Ключевые решения:
+  - Переключение polyglossia → babel[russian,english] (устранение 897 ошибок polyglossia Script)
+  - Переключение Liberation Serif → Times New Roman (ГОСТ), Liberation Mono → Courier New, Liberation Sans → Arial
+  - Добавлен `\XeTeXlinebreaklocale "ru"` + `\emergencystretch=3em` + `\sloppy` + `\tolerance=9999`
+  - Добавлен `\hyphenation{...}` для техтерминов
+  - Создан `result/contents/titlepage.tex` (заглушка с TODO для данных студента)
+  - Исправлены 6 переполняющих таблиц (tabularx вместо tabular, \small/\footnotesize)
+  - Исправлена длинная строка verbatim → lstlisting в `4_1-p2p-fuse-architecture.tex`
+  - Исправлен длинный `\texttt{model:<registry>:...}` через `{\small\texttt{...}}`
+- Итог: 185 Overfull → 4 Overfull, максимальный 13pt (5мм); шрифт Times New Roman ГОСТ; 111 страниц, 902 КБ
+- Следующий рекомендуемый шаг: предоставить данные для титульного листа (ФИО студента, группу, ФИО руководителя)

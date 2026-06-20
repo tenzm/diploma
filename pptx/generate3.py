@@ -180,7 +180,7 @@ C_LBLU = "#1565C0"; C_GRAY = "#78909C"
 
 def save(fig, name):
     path = os.path.join(CHARTS, name)
-    fig.savefig(path, dpi=160, bbox_inches="tight", facecolor="white")
+    fig.savefig(path, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     with open(path,"rb") as f: return f.read()
 
@@ -196,7 +196,7 @@ def chart_model_sizes():
                   C_GRN,C_GRN,C_GRN]
 
     with plt.rc_context(STYLE):
-        fig, ax = plt.subplots(figsize=(7.4,3.5))
+        fig, ax = plt.subplots(figsize=(7.4,3.8))
         bars = ax.bar(range(len(models)), sizes, color=colors_bar,
                       width=0.65, zorder=3)
         ax.set_yscale("log")
@@ -207,51 +207,66 @@ def chart_model_sizes():
         ax.set_ylabel("Размер весов (log-шкала)", fontsize=9)
         ax.set_title("Рост размеров ML-моделей, 2019–2024", fontsize=10, pad=6)
         ax.grid(axis="y", which="both", alpha=0.25)
+        ax.set_ylim(0.001, 5000)  # extra headroom so labels don't clip
         for bar, sz in zip(bars, sizes):
             lbl = f"{sz:.0f} ГБ" if sz>=1 else f"{sz*1000:.0f} МБ"
-            ax.text(bar.get_x()+bar.get_width()/2, sz*1.5,
+            ax.text(bar.get_x()+bar.get_width()/2, sz*1.8,
                     lbl, ha="center", va="bottom", fontsize=7.5, rotation=0)
         # Легенда
         patches = [mpatches.Patch(color=C_GRAY,label="2019–2020"),
                    mpatches.Patch(color=C_LBLU,label="2023"),
                    mpatches.Patch(color=C_GRN, label="2024")]
         ax.legend(handles=patches, fontsize=8.5, loc="upper left")
-        ax.annotate("×40 000 за 5 лет", xy=(9,281), xytext=(6.5,200),
+        # Аннотация — текст на свободном месте (нижняя правая часть)
+        ax.annotate("×40 000\nза 5 лет", xy=(6, 360), xytext=(4.2, 0.012),
                     fontsize=9, fontweight="bold", color=C_RED,
-                    arrowprops=dict(arrowstyle="->",color=C_RED,lw=1.2))
+                    arrowprops=dict(arrowstyle="->", color=C_RED, lw=1.2,
+                                   connectionstyle="arc3,rad=-0.3"),
+                    bbox=dict(boxstyle="round,pad=0.25", facecolor="white",
+                              edgecolor=C_RED, alpha=0.92))
         fig.tight_layout()
     return save(fig,"chart_model_sizes.png")
 
 
 # ── 2. Фазы холодного старта (горизонтальный waterfall) ──────────────────────
 def chart_cold_start_breakdown():
-    phases  = ["T_schedule","T_image_pull","T_unpack","T_init",
-               "T_model\ndownload","T_model\nload"]
+    phases  = ["Планирование","Загрузка\nобраза","Распаковка","Инициализация",
+               "Загрузка\nвесов","Загрузка\nв память"]
     values  = [2.0, 5.0, 3.0, 1.0, 75.0, 8.0]
     colors_bar = [C_GRAY, C_GRAY, C_GRAY, C_GRAY, C_RED, C_ORG]
+    MIN_BAR_WIDTH = 8  # секунд — порог, ниже которого текст выносим наружу
 
     with plt.rc_context(STYLE):
-        fig, ax = plt.subplots(figsize=(7.2, 3.2))
+        fig, ax = plt.subplots(figsize=(7.2, 3.4))
         starts = [sum(values[:i]) for i in range(len(values))]
         bars = ax.barh(range(len(phases)), values, left=starts,
                        color=colors_bar, height=0.55, zorder=3)
+        total = sum(values)
         for bar, val, st in zip(bars, values, starts):
-            ax.text(st + val/2, bar.get_y()+bar.get_height()/2,
-                    f"{val:.0f} с", ha="center", va="center",
-                    fontsize=8.5, color="white", fontweight="bold")
+            cy = bar.get_y() + bar.get_height() / 2
+            if val < MIN_BAR_WIDTH:
+                # бар слишком узкий — текст справа от него, чёрным
+                ax.text(st + val + 1.0, cy,
+                        f"{val:.0f} с", ha="left", va="center",
+                        fontsize=8, color="black", fontweight="bold")
+            else:
+                # текст внутри бара, белым
+                ax.text(st + val / 2, cy,
+                        f"{val:.0f} с", ha="center", va="center",
+                        fontsize=8.5, color="white", fontweight="bold")
         ax.set_yticks(range(len(phases)))
         ax.set_yticklabels(phases, fontsize=9)
         ax.set_xlabel("Время (секунды)", fontsize=9)
-        ax.set_title(f"Декомпозиция холодного старта: итого ≈ {sum(values):.0f} с",
+        ax.set_title(f"Декомпозиция холодного старта: итого ≈ {total:.0f} с",
                      fontsize=10, pad=6)
+        ax.set_xlim(0, total + 14)  # запас для текстов справа от узких баров
         ax.grid(axis="x", alpha=0.3)
-        ax.axvline(sum(values), color=C_RED, linewidth=1.2, linestyle="--", alpha=0.7)
-        ax.text(sum(values)+0.5, len(phases)-0.5, f"≈ {sum(values):.0f} с",
+        ax.axvline(total, color=C_RED, linewidth=1.2, linestyle="--", alpha=0.7)
+        ax.text(total + 0.5, len(phases) - 0.5, f"≈ {total:.0f} с",
                 color=C_RED, fontsize=9, va="center")
-        # Выделяем доминирующую фазу
-        ax.annotate("95% времени", xy=(5+75/2, 4), xytext=(55,2.5),
+        ax.annotate("95% времени", xy=(5 + 75/2, 4), xytext=(50, 2.5),
                     fontsize=8.5, color=C_RED, fontweight="bold",
-                    arrowprops=dict(arrowstyle="->",color=C_RED,lw=1.1))
+                    arrowprops=dict(arrowstyle="->", color=C_RED, lw=1.1))
         fig.tight_layout()
     return save(fig,"chart_cold_start_breakdown.png")
 
@@ -280,15 +295,18 @@ def chart_tmodel_ready():
                             ha="center", va="bottom", fontsize=9,
                             fontweight="bold", color=C_GRN)
         ax.axhline(75, color=C_RED, linewidth=0.9, linestyle="--", alpha=0.45)
-        ax.text(2.62, 76.8, "75 с — без кэша", fontsize=8, color=C_RED, alpha=0.75)
+        ax.text(0.02, 76.8, "75 с — без кэша", fontsize=8, color=C_RED, alpha=0.75)
 
-        ax.set_ylabel("T_model_ready, с", fontsize=10)
+        ax.set_ylabel("Время готовности модели, с", fontsize=10)
         ax.set_xticks(x); ax.set_xticklabels(scenarios, fontsize=9)
         ax.set_ylim(0, 90)
         ax.set_yticks([0,15,30,45,60,75])
-        ax.legend(fontsize=9, loc="upper right")
-        ax.set_title("T_model_ready по сценариям (Llama 3 8B, 15 ГБ)", fontsize=11, pad=8)
-        fig.tight_layout()
+        # Легенда под графиком, чтобы не перекрывать 75с-столбцы
+        ax.legend(fontsize=8.5, loc="upper center",
+                  bbox_to_anchor=(0.5, -0.22), ncol=3, frameon=True)
+        ax.set_title("Время готовности модели по сценариям (Llama 3 8B, 15 ГБ)", fontsize=11, pad=8)
+        fig.subplots_adjust(bottom=0.24)
+        fig.tight_layout(rect=[0, 0.18, 1, 1])
     return save(fig,"chart_tmodel_ready.png")
 
 
@@ -303,9 +321,11 @@ def chart_external_traffic():
         ax.fill_between(n, np.full_like(n,gb,dtype=float), n*gb,
                         alpha=0.12, color=C_GRN, label="Экономия")
         ax.annotate("× 10 экономии\nпри N = 10",
-                    xy=(10,15), xytext=(7.2,100),
+                    xy=(10, 15), xytext=(5.5, 142),
                     fontsize=8.5, color=C_GRN, fontweight="bold",
-                    arrowprops=dict(arrowstyle="->",color=C_GRN,lw=1.2))
+                    arrowprops=dict(arrowstyle="->", color=C_GRN, lw=1.2),
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor="white",
+                              edgecolor=C_GRN, alpha=0.9))
         ax.set_xlabel("Число реплик (N)", fontsize=10)
         ax.set_ylabel("Внешний трафик, ГБ", fontsize=10)
         ax.set_xticks(n); ax.set_ylim(0,165)
@@ -315,29 +335,40 @@ def chart_external_traffic():
     return save(fig,"chart_external_traffic.png")
 
 
-# ── 5. Доступность при репликации ─────────────────────────────────────────────
+# ── 5. Доступность при репликации — простой в год (log-шкала) ────────────────
 def chart_availability():
-    r_vals = np.array([1,2,3,4,5])
+    r_vals = np.array([1, 2, 3, 4, 5])
     a = 0.99
-    avail = (1-(1-a)**r_vals)*100
-    bar_colors = [C_ORG,"#6CAF3E",C_GRN,"#0B5E35","#073D22"]
-    labels_nines = ["2 девятки","3 девятки","4 девятки","5 девяток","6 девяток"]
+    avail = (1 - (1 - a) ** r_vals)          # доступность 0..1
+    downtime_min = (1 - avail) * 365.25 * 24 * 60  # простой в минутах в год
+    # r=4,5 → <1 сек → показываем как 0.01 мин для отображения на log-шкале
+    downtime_plot = np.maximum(downtime_min, 0.001)
+    bar_colors = [C_ORG, "#6CAF3E", C_GRN, "#0B5E35", "#073D22"]
+    nines_full  = ["2 девятки","3 девятки","4 девятки","5 девяток","6 девяток"]
+    avail_pct   = ["99.0%","99.99%","99.9999%","≈100%","≈100%"]
 
     with plt.rc_context(STYLE):
-        fig, ax = plt.subplots(figsize=(5.0, 3.2))
-        bars = ax.bar(r_vals, avail, color=bar_colors, width=0.5, zorder=3)
-        for bar, val, lab in zip(bars, avail, labels_nines):
-            ax.text(bar.get_x()+bar.get_width()/2, val+0.0003,
-                    f"{val:.4f}%\n({lab})", ha="center", va="bottom",
+        fig, ax = plt.subplots(figsize=(5.2, 3.5))
+        bars = ax.bar(r_vals, downtime_plot, color=bar_colors, width=0.5, zorder=3)
+        ax.set_yscale("log")
+
+        # Лейблы над барами: доступность + простой
+        downtime_labels = ["87.6 ч/год","52.6 мин/год","31.5 с/год","<1 с/год","<0.1 с/год"]
+        for bar, pct, dt_lbl in zip(bars, avail_pct, downtime_labels):
+            top = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width() / 2, top * 2.5,
+                    f"{pct}\n{dt_lbl}", ha="center", va="bottom",
                     fontsize=7.5, fontweight="bold")
-        ax.set_xlabel("Коэффициент репликации (r)", fontsize=10)
-        ax.set_ylabel("Доступность (%)", fontsize=10)
+
         ax.set_xticks(r_vals)
-        ax.set_xticklabels([f"r = {r}" for r in r_vals])
-        ax.set_ylim(98.9, 100.07)
-        ax.set_yticks([99.0,99.5,99.9,99.99,100.0])
-        ax.set_yticklabels(["99%","99.5%","99.9%","99.99%","100%"])
-        ax.set_title("A = 1 − (1 − a)ʳ,  a = 0.99", fontsize=10, pad=6)
+        ax.set_xticklabels(
+            [f"r = {r}\n({n})" for r, n in zip(r_vals, nines_full)], fontsize=8)
+        ax.set_ylabel("Простой в год (мин, log-шкала)", fontsize=9)
+        ax.set_ylim(0.0005, 1e6)
+        ax.set_yticks([0.001, 0.1, 1, 60, 3600, 60*24*365.25])
+        ax.set_yticklabels(["<1 с","6 с","1 мин","1 ч","2.5 дня","1 год"], fontsize=8)
+        ax.set_title("Простой в год: A = 1 − (1 − a)ʳ,  a = 0.99", fontsize=10, pad=6)
+        ax.grid(axis="y", which="both", alpha=0.25)
         fig.tight_layout()
     return save(fig,"chart_availability.png")
 
@@ -350,7 +381,7 @@ def chart_reliability():
 
     x = np.arange(len(scenarios)); w = 0.32
     with plt.rc_context(STYLE):
-        fig, ax = plt.subplots(figsize=(5.2, 3.2))
+        fig, ax = plt.subplots(figsize=(5.2, 3.8))
         ax.bar(x-w/2, nfs_impact, w, label="NFS",               color=C_ORG, zorder=3)
         ax.bar(x+w/2, p2p_impact, w, label="P2P + FUSE (r = 3)", color=C_GRN, zorder=3)
         for xi,(nv,pv) in zip(x, zip(nfs_impact, p2p_impact)):
@@ -362,10 +393,13 @@ def chart_reliability():
         ax.set_ylabel("Деградация инференса (%)", fontsize=10)
         ax.set_xticks(x); ax.set_xticklabels(scenarios, fontsize=9)
         ax.set_ylim(0, 115)
-        ax.legend(fontsize=9, loc="upper right")
+        # Легенда строго под осью, не перекрывает столбцы
+        ax.legend(fontsize=9, loc="upper center",
+                  bbox_to_anchor=(0.5, -0.30), ncol=2, frameon=True)
         ax.set_title("Деградация при сценариях отказов\n(прогретый кластер, r = 3)",
                      fontsize=10, pad=6)
-        fig.tight_layout()
+        fig.subplots_adjust(bottom=0.30)
+        fig.tight_layout(rect=[0, 0.25, 1, 1])
     return save(fig,"chart_reliability.png")
 
 

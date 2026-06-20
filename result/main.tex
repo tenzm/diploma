@@ -6,8 +6,11 @@
 % ============================================================
 \documentclass[a4paper,14pt]{extreport}
 
-\usepackage[T2A]{fontenc}
-\usepackage[utf8]{inputenc}
+% XeTeX: fontspec + babel (ГОСТ — Times New Roman 14pt)
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont[Scale=0.85, HyphenChar={-}]{Courier New}
 \usepackage[russian,english]{babel}
 \usepackage{geometry}
 \geometry{left=30mm, right=15mm, top=20mm, bottom=20mm}
@@ -16,8 +19,23 @@
 \usepackage{indentfirst}
 \setlength{\parindent}{1.25cm}
 
+% ---- перенос слов и допуск выхода строк ----
+\XeTeXlinebreaklocale "ru"
+\XeTeXlinebreakskip = 0pt plus 1pt
+\emergencystretch=3em
+\righthyphenmin=2
+\lefthyphenmin=2
+\tolerance=9999
+\hbadness=9999
+\sloppy
+
+% ---- точки переноса для составных техтерминов ----
+\hyphenation{stor-age-a-gent stor-age-moun-ter Ku-ber-ne-tes Hug-ging-Face
+             Da-mon-Set work-er ser-ver-less in-fe-rence read-path ML-run-time}
+
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
+\graphicspath{{figures/}}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -66,6 +84,9 @@
 
 % ============================================================
 \begin{document}
+
+\include{contents/titlepage}
+\setcounter{page}{2}
 
 \include{contents/0-abstract}
 \tableofcontents

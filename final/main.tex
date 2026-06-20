@@ -1,59 +1,105 @@
-\documentclass[master, fontsize=14]{diploma}
+% ============================================================
+% Дипломная работа
+% Оптимизация холодного старта и масштабирования моделей
+% машинного обучения в бессерверном инференсе для обеспечения
+% надежности и высокой доступности
+% ============================================================
+\documentclass[a4paper,14pt]{extreport}
 
-\student{Блинов Максим Алексеевич}
-\group{М8О-209СВ-24}
-\theme{Оптимизация холодного старта и масштабирования моделей машинного обучения в бессерверном инференсе для обеспечения надежности и высокой доступности}
+% XeTeX: fontspec + babel (ГОСТ — Times New Roman 14pt)
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont[Scale=0.85, HyphenChar={-}]{Courier New}
+\usepackage[russian,english]{babel}
+\usepackage{geometry}
+\geometry{left=30mm, right=15mm, top=20mm, bottom=20mm}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{indentfirst}
+\setlength{\parindent}{1.25cm}
 
-\supervisor{Булакина Мария Борисовна}
-\firstConsultant{---}
-\secondConsultant{---}
-\reviewer{---}
+% ---- перенос слов и допуск выхода строк ----
+\XeTeXlinebreaklocale "ru"
+\XeTeXlinebreakskip = 0pt plus 1pt
+\emergencystretch=3em
+\righthyphenmin=2
+\lefthyphenmin=2
+\tolerance=9999
+\hbadness=9999
+\sloppy
 
-\faculty{№ 8 <<Компьютерные науки и прикладная математика>>}
-\department{806}
-\speciality{02.04.02 <<Фундаментальная информатика и информационные технологии>>}
-\profile{Информатика}
+% ---- точки переноса для составных техтерминов ----
+\hyphenation{stor-age-a-gent stor-age-moun-ter Ku-ber-ne-tes Hug-ging-Face
+             Da-mon-Set work-er ser-ver-less in-fe-rence read-path ML-run-time}
 
-\departmentFullName{№ 806}
-\headOfDepartment{Крылов Сергей Сергеевич}
-
-% Дата. Оставляем пустое место для дня
-\date{\uline{\hspace{24pt}} мая \the\year\ года}
-
-\input{contents/glossary}
-
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
 \usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\hypersetup{colorlinks=false, pdfborder={0 0 0}}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
-\addbibresource{main.bib}
+% ---- настройка листингов ----
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  breaklines=true,
+  frame=single,
+  captionpos=b,
+  numbers=left,
+  numberstyle=\tiny,
+  tabsize=2
+}
 
-% Иллюстрации всегда по центру
-\makeatletter
-\g@addto@macro\@floatboxreset\centering
-\makeatother
+% ---- нумерация разделов ----
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
 
+% ---- стиль заголовков ----
+\usepackage{titlesec}
+\titleformat{\chapter}[block]{\normalfont\large\bfseries\centering}{}{0pt}{}
+\titleformat{\section}[block]{\normalfont\normalsize\bfseries}{}{0pt}{}
+\titleformat{\subsection}[block]{\normalfont\normalsize\bfseries}{}{0pt}{}
+
+% ---- библиография ----
+\usepackage[square,numbers,sort&compress]{natbib}
+\bibliographystyle{unsrtnat}
+
+% ---- счётчик рисунков и таблиц через главу ----
+\usepackage{chngcntr}
+\counterwithin{figure}{chapter}
+\counterwithin{table}{chapter}
+\counterwithin{equation}{chapter}
+
+% ============================================================
 \begin{document}
-    \maketitle
 
-    % \includepdf[pages=-]{extra/task} % Задание
-    \setcounter{page}{2} % Устанавливает счётчик страниц
+\include{contents/titlepage}
+\setcounter{page}{2}
 
-    \input{contents/0-abstract} % Реферат
+\include{contents/0-abstract}
+\tableofcontents
+\include{contents/terms}
+\include{contents/abbreviations}
+\include{contents/1-introduction}
+\include{contents/1_1-cold-start-problem}
+\include{contents/2_1-existing-solutions}
+\include{contents/3_1-nfs-stage}
+\include{contents/4_1-p2p-fuse-architecture}
+\include{contents/5_1-evaluation}
+\include{contents/6-conclusion}
 
-    \tableofcontents % Содержание
-    \input{contents/terms}         % Термины и определения
-    \input{contents/abbreviations} % Перечень сокращений и обозначений
+\bibliography{main}
 
-    \include{contents/1-introduction} % Введение
-
-    \include{contents/1_1-cold-start-problem}
-    \include{contents/2_1-existing-solutions}
-    \include{contents/3_1-nfs-stage}
-    \include{contents/4_1-p2p-fuse-architecture}
-    \include{contents/5_1-evaluation}
-
-    \include{contents/6-conclusion} % Заключение
-
-    \printbibliography % Список литературы
-
-    \appendix % Приложения
 \end{document}
