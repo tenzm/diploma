@@ -48,11 +48,14 @@
 
 Физический путь к чанку на диске агента строится следующим образом:
 
-\begin{verbatim}
-<cache_dir>/<registry>/<repo>/<model>/<revision>/
-  <hash(filepath)[0:2]>/<hash(filepath)[2:4]>/<hash(filepath)>/
-  chunk_<chunk_id>
-\end{verbatim}
+\begin{lstlisting}[numbers=none,frame=none,basicstyle=\small\ttfamily]
+<cache_dir>/
+  <registry>/<repo>/<model>/<revision>/
+    <hash(filepath)[0:2]>/
+      <hash(filepath)[2:4]>/
+        <hash(filepath)>/
+          chunk_<chunk_id>
+\end{lstlisting}
 
 Хеширование пути к файлу решает две задачи. Первая --- устранение проблемы специальных символов и длинных имён: имена файлов в HuggingFace-репозиториях могут содержать слеши, пробелы и длинные пути, несовместимые с прямым использованием в качестве имени файла на диске. Хеш SHA-256 от filepath даёт детерминированное, фиксированной длины имя директории. Вторая задача --- равномерное распределение файлов: файловые системы Linux имеют ограничения на число записей в одной директории (\texttt{ext4} --- до нескольких десятков тысяч записей без \texttt{dir\_index}, что вызывает деградацию производительности); двухуровневое шардирование по первым четырём символам хеша обеспечивает $256 \times 256 = 65536$ возможных поддиректорий, практически исключая перегрузку отдельных директорий.
 
@@ -89,7 +92,12 @@
 \begin{itemize}[leftmargin=*]
   \item \texttt{node:<node\_id>} --- heartbeat агента. Значение (JSON или строка) содержит IP-адрес, TCP-порт, load score, метку времени последнего обновления. TTL = 30--60~с. Если агент не обновляет heartbeat, запись автоматически исчезает, и следующий запрос к этому агенту не выполняется.
   \item \texttt{chunk:<logical\_id>:peers} --- Set идентификаторов нод, хранящих данный чанк. Операция \texttt{SADD <node\_id>} регистрирует ноду; \texttt{SMEMBERS} возвращает всех известных пиров за $O(1)$ (одна хеш-таблица в памяти Redis). Сложность \texttt{SMEMBERS} для Set из $k$ пиров --- $O(k)$.
-  \item {\small\texttt{model:<registry>:<repo>:<model>:<revision>:file:<hash>:chunk:<id>:meta}} --- Hash с метаданными чанка: размер в байтах (\texttt{size}), контрольная сумма SHA-256 (\texttt{checksum}). Используется для верификации целостности после загрузки.
+  \item Hash с метаданными чанка строится по следующей схеме:
+\begin{lstlisting}[numbers=none,frame=none,basicstyle=\footnotesize\ttfamily]
+model:<registry>:<repo>:<model>:<revision>:
+  file:<hash>:chunk:<id>:meta
+\end{lstlisting}
+  В Hash хранятся размер в байтах (\texttt{size}) и контрольная сумма SHA-256 (\texttt{checksum}); ключ используется для верификации целостности после загрузки.
 \end{itemize}
 
 Разделение информации о пирах и метаданных чанка на два ключа (\texttt{:peers} и \texttt{:meta}) позволяет обновлять их независимо. Метаданные чанка (размер, хеш) не изменяются после первой записи --- ключ \texttt{:meta} фактически write-once. Множество пиров (\texttt{:peers}) динамически растёт по мере того, как новые ноды кэшируют чанк, и может уменьшаться при явном \texttt{SREM} или истечении TTL.
@@ -155,7 +163,7 @@ Multicast DNS (RFC 6762) позволяет устройствам в локал
 \label{tab:discovery}
 \begin{tabular}{lp{2.8cm}p{3.2cm}p{3.2cm}}
 \toprule
-\textbf{Критерий} & \textbf{Gossip} & \textbf{mDNS/Broadcast} & \textbf{Redis heartbeat} \\
+\textbf{Критерий} & \textbf{Gossip} & \textbf{\shortstack{mDNS/\\Broadcast}} & \textbf{Redis heartbeat} \\
 \midrule
 Скорость lookup      & $O(\log N)$ раундов & Быстро (локальная сеть) & $O(1)$ \\
 Консистентность      & eventual              & Нет                     & TTL-based \\
@@ -193,9 +201,19 @@ SPOF                 & Нет                  & Нет                     & Re
 В текущем прототипе реализован HTTP-API с двумя основными эндпоинтами:
 
 \begin{itemize}[leftmargin=*]
-  \item \texttt{GET /api/v1/models/\{registry\}/\{repo\}/\{model\}/\{revision\}/tree} --- получение дерева файлов модели (имена файлов, размеры, хеши);
-  \item \texttt{GET /api/v1/models/\{registry\}/\{repo\}/\{model\}/\{revision\}/raw/\{filepath\}} --- чтение диапазона байтов файла модели (через заголовок HTTP \texttt{Range: bytes=X-Y}).
+  \item получение дерева файлов модели (имена файлов, размеры, хеши):
+\begin{lstlisting}[numbers=none,frame=none,basicstyle=\footnotesize\ttfamily,aboveskip=0pt,belowskip=0pt]
+GET /api/v1/models/{registry}/{repo}/{model}/
+  {revision}/tree
+\end{lstlisting}
+  \item чтение диапазона байтов файла модели:
+\begin{lstlisting}[numbers=none,frame=none,basicstyle=\footnotesize\ttfamily,aboveskip=0pt,belowskip=0pt]
+GET /api/v1/models/{registry}/{repo}/{model}/
+  {revision}/raw/{filepath}
+\end{lstlisting}
 \end{itemize}
+
+Диапазон байтов в запросе чтения задаётся HTTP-заголовком \texttt{Range: bytes=X-Y}.
 
 Выбор HTTP как протокола в текущем прототипе обусловлен простотой реализации и отладки. В целевой архитектуре для локальной связи \texttt{storage-mounter $\to$ storage-agent} планируется переход на бинарный протокол поверх UDS для снижения накладных расходов.
 

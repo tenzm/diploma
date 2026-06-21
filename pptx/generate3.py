@@ -187,38 +187,44 @@ def save(fig, name):
 
 # ── 1. Рост размеров ML-моделей ───────────────────────────────────────────────
 def chart_model_sizes():
-    models = ["GPT-2\n2019","BERT\n2019","T5-11B\n2020","GPT-3\n2020",
-              "LLaMA 1 7B\n2023","LLaMA 2 70B\n2023","Falcon 180B\n2023",
-              "LLaMA 3 8B\n2024","LLaMA 3 70B\n2024","Mixtral 8×22B\n2024"]
-    sizes  = [0.003, 0.42, 22, 350, 13, 140, 360, 15, 140, 281]  # GB (float32)
-    colors_bar = [C_GRAY,C_GRAY,C_GRAY,C_ORG,
-                  C_LBLU,C_LBLU,C_LBLU,
-                  C_GRN,C_GRN,C_GRN]
+    # Оценка хранения основных параметров в FP16: число параметров × 2 байта.
+    # Указаны десятичные ГБ; реальный объём артефакта зависит от сериализации,
+    # служебных тензоров и может отличаться от этой оценки.
+    # Отобрана именно монотонная последовательность релизов. Она иллюстрирует
+    # рост, но не утверждает, что каждый выпуск в соответствующем году был крупнее
+    # всех остальных моделей: в экосистеме одновременно существуют модели разных
+    # размеров и назначения.
+    models = ["BERT\nBase\n2018", "GPT-2\nXL\n2019", "T5-11B\n2020", "GPT-3\n2020",
+              "Falcon\n180B\n2023", "DeepSeek\nV2\n2024", "GLM-4.5\n2025",
+              "DeepSeek\nV4 Pro\n2026"]
+    sizes  = [0.22, 3.0, 22, 350, 360, 472, 717, 1723]  # GB, FP16
+    colors_bar = [C_GRAY, C_GRAY, C_ORG, C_ORG, C_LBLU, C_GRN,
+                  "#6A1B9A", C_RED]
 
     with plt.rc_context(STYLE):
-        fig, ax = plt.subplots(figsize=(7.4,3.8))
+        fig, ax = plt.subplots(figsize=(6.2,4.5))
         bars = ax.bar(range(len(models)), sizes, color=colors_bar,
                       width=0.65, zorder=3)
         ax.set_yscale("log")
-        ax.set_yticks([0.001,0.01,0.1,1,10,100,1000])
-        ax.set_yticklabels(["<1 МБ","10 МБ","100 МБ","1 ГБ","10 ГБ","100 ГБ","1 ТБ"])
+        ax.set_yticks([0.1,1,10,100,1000])
+        ax.set_yticklabels(["100 МБ","1 ГБ","10 ГБ","100 ГБ","1 ТБ"])
         ax.set_xticks(range(len(models)))
-        ax.set_xticklabels(models, fontsize=8)
-        ax.set_ylabel("Размер весов (log-шкала)", fontsize=9)
-        ax.set_title("Рост размеров ML-моделей, 2019–2024", fontsize=10, pad=6)
+        ax.set_xticklabels(models, fontsize=7.5)
+        ax.set_ylabel("Расчётный объём весов FP16 (log-шкала)", fontsize=9)
+        ax.set_title("Монотонный рост объёма весов ML-моделей, 2018–2026", fontsize=10, pad=6)
         ax.grid(axis="y", which="both", alpha=0.25)
-        ax.set_ylim(0.001, 5000)  # extra headroom so labels don't clip
+        ax.set_ylim(0.1, 5000)  # запас сверху для подписи столбца DeepSeek V4 Pro
         for bar, sz in zip(bars, sizes):
-            lbl = f"{sz:.0f} ГБ" if sz>=1 else f"{sz*1000:.0f} МБ"
+            if sz >= 1000:
+                lbl = f"{sz / 1000:.2f}".replace(".", ",") + " ТБ"
+            elif sz >= 1:
+                lbl = f"{sz:.0f} ГБ"
+            else:
+                lbl = f"{sz * 1000:.0f} МБ"
             ax.text(bar.get_x()+bar.get_width()/2, sz*1.8,
                     lbl, ha="center", va="bottom", fontsize=7.5, rotation=0)
-        # Легенда
-        patches = [mpatches.Patch(color=C_GRAY,label="2019–2020"),
-                   mpatches.Patch(color=C_LBLU,label="2023"),
-                   mpatches.Patch(color=C_GRN, label="2024")]
-        ax.legend(handles=patches, fontsize=8.5, loc="upper left")
-        # Аннотация — текст на свободном месте (нижняя правая часть)
-        ax.annotate("×40 000\nза 5 лет", xy=(6, 360), xytext=(4.2, 0.012),
+        # Годы указаны непосредственно под столбцами; легенда не нужна.
+        ax.annotate("≈×7 800\n0,22 ГБ → 1,72 ТБ", xy=(7, 1723), xytext=(3.2, 0.35),
                     fontsize=9, fontweight="bold", color=C_RED,
                     arrowprops=dict(arrowstyle="->", color=C_RED, lw=1.2,
                                    connectionstyle="arc3,rad=-0.3"),
@@ -452,10 +458,11 @@ title_box(s2, "Актуальность темы")
 txbox(s2, Inches(0.35), Inches(1.05), Inches(4.55), Inches(4.35), [
     P("Размеры языковых моделей растут:", sz=1750, bold=True),
     E(250),
-    P("  GPT-2 (2019):       ~3 МБ весов", sz=1550),
-    P("  GPT-3 (2020):       ~350 ГБ весов", sz=1550),
-    P("  LLaMA 3 70B (2024): ~140 ГБ весов", sz=1550),
-    P("  Falcon 180B (2023): ~360 ГБ весов", sz=1550),
+    P("  BERT Base (2018):    ~0,22 ГБ весов", sz=1550),
+    P("  GPT-3 (2020):        ~350 ГБ весов", sz=1550),
+    P("  DeepSeek V2 (2024):  ~472 ГБ весов", sz=1550),
+    P("  GLM-4.5 (2025):      ~717 ГБ весов", sz=1550),
+    P("  DeepSeek V4 Pro (2026): ~1,72 ТБ", sz=1550),
     E(450),
     P("Следствие для serverless-инференса:", sz=1750, bold=True),
     E(250),
