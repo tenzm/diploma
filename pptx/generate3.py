@@ -37,7 +37,7 @@ prs = Presentation()
 prs.slide_width  = Inches(10.0)
 prs.slide_height = Inches(5.625)
 blank_layout = prs.slide_layouts[6]
-FONT = "Roboto"
+FONT = "Times New Roman"
 
 # ── Палитра ───────────────────────────────────────────────────────────────────
 BLACK  = RGBColor(0x00,0x00,0x00); WHITE  = RGBColor(0xFF,0xFF,0xFF)
@@ -170,7 +170,7 @@ def img(slide, data_bytes, x,y,w,h):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 STYLE = {
-    "font.family":"DejaVu Sans","font.size":9,
+    "font.family":"Times New Roman","font.size":12,
     "axes.spines.top":False,"axes.spines.right":False,
     "axes.grid":True,"axes.grid.axis":"y","grid.alpha":0.35,
     "figure.facecolor":"white","axes.facecolor":"white",
@@ -310,7 +310,7 @@ def chart_tmodel_ready():
         # Легенда под графиком, чтобы не перекрывать 75с-столбцы
         ax.legend(fontsize=8.5, loc="upper center",
                   bbox_to_anchor=(0.5, -0.22), ncol=3, frameon=True)
-        ax.set_title("Время готовности модели по сценариям (Llama 3 8B, 15 ГБ)", fontsize=11, pad=8)
+        ax.set_title("Время готовности модели по сценариям (DeepSeek-LLM 7B, 15 ГБ)", fontsize=11, pad=8)
         fig.subplots_adjust(bottom=0.24)
         fig.tight_layout(rect=[0, 0.18, 1, 1])
     return save(fig,"chart_tmodel_ready.png")
@@ -336,7 +336,7 @@ def chart_external_traffic():
         ax.set_ylabel("Внешний трафик, ГБ", fontsize=10)
         ax.set_xticks(n); ax.set_ylim(0,165)
         ax.legend(fontsize=9)
-        ax.set_title("Внешний трафик при масштабировании\n(Llama 3 8B = 15 ГБ)", fontsize=10, pad=6)
+        ax.set_title("Внешний трафик при масштабировании\n(DeepSeek-LLM 7B = 15 ГБ)", fontsize=10, pad=6)
         fig.tight_layout()
     return save(fig,"chart_external_traffic.png")
 
@@ -393,7 +393,7 @@ def chart_reliability():
         for xi,(nv,pv) in zip(x, zip(nfs_impact, p2p_impact)):
             ax.text(xi-w/2, nv+1.5, f"{nv}%", ha="center", fontsize=9,
                     color=C_ORG, fontweight="bold")
-            lbl = "< 2%" if pv==2 else (f"{pv}%" if pv else "0%  ✓")
+            lbl = "< 2%" if pv==2 else (f"{pv}%" if pv else "0%")
             ax.text(xi+w/2, pv+1.5, lbl, ha="center", fontsize=9,
                     color=C_GRN, fontweight="bold")
         ax.set_ylabel("Деградация инференса (%)", fontsize=10)
@@ -644,9 +644,9 @@ txbox(s8, Inches(0.451), Inches(1.05), Inches(4.55), Inches(4.35), [
     P("  •  Redis: 1 master + 2 replica (Sentinel)", sz=1500),
     E(500),
     P("Тестовые модели:", sz=1800, bold=True), E(300),
-    P("  •  Llama 3 8B   —  15 ГБ,    960 чанков × 16 МБ", sz=1500),
+    P("  •  DeepSeek-LLM 7B   —  15 ГБ,    960 чанков × 16 МБ", sz=1500),
     P("  •  Mistral 7B   —  14 ГБ,    896 чанков × 16 МБ", sz=1500),
-    P("  •  Llama 3 70B  —  140 ГБ,  8 960 чанков × 16 МБ", sz=1500),
+    P("  •  DeepSeek-LLM 67B  —  140 ГБ,  8 960 чанков × 16 МБ", sz=1500),
 ])
 txbox(s8, Inches(5.25), Inches(1.05), Inches(4.45), Inches(4.35), [
     P("Сценарии:", sz=1800, bold=True), E(300),
@@ -746,7 +746,7 @@ body_box(s11, [
     P("  ✓  Теоретический анализ: AMAT, Закон Литтла, Амдал, Ципф", sz=1600),
     E(400),
     P("Практическая ценность:", sz=1800, bold=True), E(200),
-    P("  •  135 ГБ экономии внешнего трафика при 10 репликах Llama 3 8B", sz=1600),
+    P("  •  135 ГБ экономии внешнего трафика при 10 репликах DeepSeek-LLM 7B", sz=1600),
     Pm(run("  •  ",sz=1600),
        run("T",sz=1600,italic=True), sub("model_ready",sz=1600),
        run(": 75 с → 2 с при прогретом кластере  (×36 ускорение)",sz=1600)),

@@ -27,6 +27,81 @@
 \g@addto@macro\@floatboxreset\centering
 \makeatother
 
+\newcommand{\predheading}[1]{%
+    \par\smallskip
+    \noindent\textbf{#1}%
+    \par\noindent
+}
+
+\newcommand{\tablebodyfont}{%
+    \fontsize{12pt}{12pt}\selectfont
+    \setstretch{1.0}\selectfont
+}
+
+\DeclareCaptionFont{gostcaptionfont}{%
+    \fontsize{14pt}{14pt}\selectfont
+    \setstretch{1.0}\selectfont
+}
+\DeclareCaptionLabelFormat{gosttablelabel}{Таблица~#2}
+\DeclareCaptionFormat{gosttableformat}{\hfill#1#2\par\raggedright#3}
+
+\captionsetup[figure]{
+    font={gostcaptionfont,bf},
+    justification=raggedright,
+    singlelinecheck=false,
+    labelsep=endash,
+    width=\textwidth,
+    aboveskip=12pt,
+    belowskip=6pt
+}
+
+\captionsetup[table]{
+    font={gostcaptionfont,bf},
+    labelformat=gosttablelabel,
+    labelsep=none,
+    format=gosttableformat,
+    justification=raggedright,
+    singlelinecheck=false,
+    width=\textwidth,
+    aboveskip=12pt,
+    belowskip=6pt
+}
+
+\titleformat{\structure}[hang]{\clearpage\fontsize{14pt}{14pt}\selectfont\bfseries\raggedright}{}{0pt}{}
+\titlespacing*{\structure}{0pt}{18pt}{12pt}
+
+\titleformat{\section}[block]{\fontsize{14pt}{14pt}\selectfont\bfseries\raggedright}{\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{18pt}{12pt}
+
+\renewcommand*{\bibfont}{%
+    \fontsize{14pt}{14pt}\selectfont
+    \setstretch{1.0}\selectfont
+}
+\setlength{\bibitemsep}{6pt}
+\setlength{\bibparsep}{0pt}
+\defbibenvironment{bibliography}
+    {\list
+        {}
+        {\setlength{\leftmargin}{0pt}%
+         \setlength{\itemindent}{0pt}%
+         \setlength{\itemsep}{\bibitemsep}%
+         \setlength{\parsep}{\bibparsep}}}
+    {\endlist}
+    {\item
+        \printtext[labelnumberwidth]{%
+            \printfield{labelprefix}%
+            \printfield{labelnumber}\adddot}%
+        \hspace{0.5em}}
+
+\makeatletter
+\renewcommand{\@makefntext}[1]{%
+    \setstretch{1.0}\fontsize{12pt}{12pt}\selectfont
+    \noindent\makebox[1.8em][l]{\@makefnmark}#1%
+}
+\setlength{\skip\footins}{0pt}
+\setlength{\footnotesep}{0pt}
+\makeatother
+
 \begin{document}
     \maketitle
 
