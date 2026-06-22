@@ -1,7 +1,7 @@
 """
 generate3.py — финальная версия презентации диплома с встроенными графиками.
 
-Графики (8 штук) сохраняются в pptx/charts/ и вставляются в слайды:
+Графики (9 штук) сохраняются в pptx/charts/; основные из них вставляются в слайды:
   Слайд 2  → chart_model_sizes.png          (рост размеров ML-моделей)
   Слайд 4  → chart_cold_start_breakdown.png  (фазы холодного старта)
   Слайд 9  → chart_tmodel_ready.png          (T_model_ready по сценариям)
@@ -10,6 +10,9 @@ generate3.py — финальная версия презентации дипл
              chart_loading_speed_replicas.png (совокупная скорость подготовки реплик)
   Слайд 10 → chart_availability.png          (доступность при репликации)
              chart_reliability.png           (деградация при отказах)
+  Для текста диплома дополнительно сохраняется:
+             chart_emptydir_burst_degradation.png
+             (недоступность новых реплик при burst-старте в emptyDir)
 
 Запуск: python3 generate3.py
 Результат: final-pptx-v2.pptx  +  charts/*.png
@@ -343,7 +346,36 @@ def chart_external_traffic():
     return save(fig,"chart_external_traffic.png")
 
 
-# ── 5. Время подготовки burst-пакета реплик ──────────────────────────────────
+# ── 5. Деградация inference в baseline при burst-старте ──────────────────────
+def chart_emptydir_burst_degradation():
+    replicas = np.array([10, 8, 4, 1])
+    ready_time = np.array([108.8, 100.4, 85.9, 74.8])
+    colors = [C_RED, "#D85656", "#E88989", "#F3B0B0"]
+
+    with plt.rc_context(STYLE):
+        fig, ax = plt.subplots(figsize=(5.7, 3.2))
+        y = np.arange(len(replicas))
+        bars = ax.barh(y, ready_time, color=colors, height=0.54, zorder=3)
+
+        ax.axvline(100, color=C_RED, linewidth=1.0, linestyle=":", alpha=0.6)
+        ax.set_xlabel("Окно полной недоступности новых реплик, с", fontsize=10)
+        ax.set_ylabel("Одновременно стартующие реплики", fontsize=10)
+        ax.set_xlim(0, 120)
+        ax.set_xticks(np.arange(0, 121, 20))
+        ax.set_yticks(y)
+        ax.set_yticklabels([f"N = {n}" for n in replicas], fontsize=9)
+        ax.invert_yaxis()
+
+        for bar, value in zip(bars, ready_time):
+            ax.text(value + 1.8, bar.get_y() + bar.get_height() / 2,
+                    f"{value:.1f} с", va="center", ha="left",
+                    fontsize=8.8, color=C_RED, fontweight="bold")
+
+        fig.tight_layout()
+    return save(fig,"chart_emptydir_burst_degradation.png")
+
+
+# ── 6. Время подготовки burst-пакета реплик ──────────────────────────────────
 def chart_loading_time_replicas():
     replicas = np.array([1, 2, 4, 6, 8, 10])
     emptydir = np.array([74.8, 78.6, 85.9, 92.7, 100.4, 108.8])
@@ -379,7 +411,7 @@ def chart_loading_time_replicas():
     return save(fig,"chart_loading_time_replicas.png")
 
 
-# ── 6. Совокупная скорость подготовки реплик ─────────────────────────────────
+# ── 7. Совокупная скорость подготовки реплик ─────────────────────────────────
 def chart_loading_speed_replicas():
     replicas = np.array([1, 2, 4, 6, 8, 10], dtype=float)
     total_gb = replicas * 15.0
@@ -421,7 +453,7 @@ def chart_loading_speed_replicas():
     return save(fig,"chart_loading_speed_replicas.png")
 
 
-# ── 7. Доступность при репликации — простой в год (log-шкала) ────────────────
+# ── 8. Доступность при репликации — простой в год (log-шкала) ────────────────
 def chart_availability():
     r_vals = np.array([1, 2, 3, 4, 5])
     a = 0.99
@@ -459,7 +491,7 @@ def chart_availability():
     return save(fig,"chart_availability.png")
 
 
-# ── 8. Деградация при сценариях отказов ──────────────────────────────────────
+# ── 9. Деградация при сценариях отказов ──────────────────────────────────────
 def chart_reliability():
     scenarios = ["Отказ\nworker-ноды","Недоступность\nRedis","Недоступность\nHF Hub"]
     nfs_impact = [100, 0, 100]   # % затронутых запросов
@@ -497,11 +529,12 @@ data_model_sizes   = chart_model_sizes()
 data_cold_start    = chart_cold_start_breakdown()
 data_tmodel_ready  = chart_tmodel_ready()
 data_ext_traffic   = chart_external_traffic()
+data_emptydir_burst = chart_emptydir_burst_degradation()
 data_load_time     = chart_loading_time_replicas()
 data_load_speed    = chart_loading_speed_replicas()
 data_availability  = chart_availability()
 data_reliability   = chart_reliability()
-print(f"  Saved 8 PNG files to {CHARTS}/")
+print(f"  Saved 9 PNG files to {CHARTS}/")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
