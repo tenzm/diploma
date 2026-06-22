@@ -35,11 +35,11 @@ else
 fi
 
 if [[ "$CLEAN" -eq 1 ]]; then
-  LATEX_CMD="latexmk -C main.tex && latexmk -C review.tex && latexmk -C supervisor_review.tex"
+  LATEX_CMD="latexmk -C main.tex && latexmk -C review.tex && latexmk -C supervisor_review.tex && latexmk -C task.tex"
   echo "==> Cleaning build artifacts..."
 else
-  LATEX_CMD="latexmk -pdfxe -interaction=nonstopmode main.tex && latexmk -pdfxe -interaction=nonstopmode review.tex && latexmk -pdfxe -interaction=nonstopmode supervisor_review.tex"
-  echo "==> Compiling diploma and review documents..."
+  LATEX_CMD="latexmk -pdfxe -interaction=nonstopmode main.tex && latexmk -pdfxe -interaction=nonstopmode review.tex && latexmk -pdfxe -interaction=nonstopmode supervisor_review.tex && latexmk -pdfxe -interaction=nonstopmode task.tex"
+  echo "==> Compiling diploma and service documents..."
 fi
 
 docker run --rm \
@@ -53,6 +53,7 @@ if [[ "$CLEAN" -eq 0 ]]; then
   PDF="$DOC_DIR/main.pdf"
   REVIEW_PDF="$DOC_DIR/review.pdf"
   SUPERVISOR_REVIEW_PDF="$DOC_DIR/supervisor_review.pdf"
+  TASK_PDF="$DOC_DIR/task.pdf"
   if [[ -f "$PDF" ]]; then
     SIZE=$(du -h "$PDF" | cut -f1)
     echo ""
@@ -75,6 +76,14 @@ if [[ "$CLEAN" -eq 0 ]]; then
     echo "==> Done: $SUPERVISOR_REVIEW_PDF ($SUPERVISOR_REVIEW_SIZE)"
   else
     echo "==> Build finished but supervisor_review.pdf not found — check logs above"
+    exit 1
+  fi
+
+  if [[ -f "$TASK_PDF" ]]; then
+    TASK_SIZE=$(du -h "$TASK_PDF" | cut -f1)
+    echo "==> Done: $TASK_PDF ($TASK_SIZE)"
+  else
+    echo "==> Build finished but task.pdf not found — check logs above"
     exit 1
   fi
 fi

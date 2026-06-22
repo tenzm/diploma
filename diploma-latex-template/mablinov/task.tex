@@ -1,0 +1,101 @@
+\documentclass[master, fontsize=12pt]{diploma}
+
+\usepackage{task}
+
+\input{info}
+\group{М8О-109СВ-24}
+
+\headOfDepartmentTitle{Директор Дирекции Института № 8}
+
+\addbibresource{main.bib}
+
+\makeatletter
+\renewcommand{\makeAffiliations}{
+    \begingroup
+    \fontsize{12pt}{14pt}\selectfont
+    \setlength{\parskip}{0pt}
+    \raggedright
+    \noindent\textbf{Институт~(Филиал)} \expandafter\uline\expandafter{\expanded{\@faculty}\hfill}\par
+    \noindent\textbf{Кафедра } \uline{\@department\hfill}\par
+    \noindent\textbf{Группа } \uline{\@group}\hspace{0.8em}\textbf{Направление~подготовки }%
+    \expandafter\uline\expandafter{\expanded{\@speciality}\hfill}\par
+    \noindent\textbf{\@profileType} \uline{\@profile\hfill}\par
+    \noindent\textbf{Квалификация:} \uline{\textbf{\@degree}\hfill}\par
+    \endgroup
+}
+
+\renewcommand{\makeSupervisorLine}{
+    \textbf{Руководитель} \uline{\@supervisor\hfill}
+}
+\makeatother
+
+\begin{document}
+\fillTaskHeader
+
+\textbf{1.} \makeThemeLine
+
+\textbf{2. Срок сдачи обучающимся законченной работы} \uline{24.05.2026 \hfill}
+
+\textbf{3. Задание и исходные данные к работе}\\
+Провести анализ причин холодного старта моделей машинного обучения в бессерверном
+инференсе Kubernetes, исследовать существующие решения для совместного хранения и
+кэширования весов моделей, разработать и обосновать архитектуру распределённого
+кэширования с этапом NFS и целевой P2P/FUSE-системой, реализовать компоненты
+\texttt{storage-agent} и \texttt{storage-mounter}, выполнить нагрузочное сравнение
+с подходами \texttt{emptyDir} и NFS. Исходными данными являются публикации по
+\texttt{serverless} ML inference, распределённым файловым системам и кэшированию,
+исходный код реализованных компонентов, результаты экспериментального тестирования и
+материалы итоговой презентации.
+
+\textbf{Перечень иллюстративно-графических материалов:}
+\vspace{\parskip}
+\begin{table}
+    \fontsize{11pt}{13pt}\selectfont
+    \begin{tabularx}{\textwidth}{|c|X|c|}\hline
+    \textbf{№ п/п} & \centering\textbf{Наименование} & \textbf{\makecell{Количество\\листов\\(слайдов)}} \\ \hline
+    1 & Титульный слайд & 1 \\ \hline
+    2 & Обоснование актуальности темы работы & 2 \\ \hline
+    3 & Цель и задачи работы & 1 \\ \hline
+    4 & Исходная архитектура и постановка задачи & 2 \\ \hline
+    5 & Существующие решения & 1 \\ \hline
+    6 & Требования к архитектуре & 1 \\ \hline
+    7 & Используемые технологии & 1 \\ \hline
+    8 & Архитектура решения & 1 \\ \hline
+    9 & Нагрузочное тестирование и экспериментальное сравнение & 5 \\ \hline
+    10 & Итоги работы и направления дальнейшего развития & 2 \\ \hline
+    \end{tabularx}
+\end{table}
+
+% Все что выше должно уместиться на одну страницу. В крайнем случая можно переносить части вниз (или наоборот)
+\vfill\clearpage
+\newgeometry{left=15mm, right=30mm, top=20mm, bottom=20mm}
+
+\textbf{4. Перечень подлежащих разработке разделов и этапы выполнения работы}
+\vspace{\parskip}
+\begin{table}
+    \fontsize{10pt}{12pt}\selectfont
+    \begin{tabularx}{\textwidth}{|c|>{\centering\arraybackslash}X|c|c|c|}\hline
+    \textbf{\makecell{№\\п/п}} & \textbf{Наименование раздела или этапа} &
+    \textbf{\makecell{Трудоёмкость в\\\% от полной\\трудоёмкости\\ВКР}} &
+    \textbf{Срок выполнения} & \textbf{Примечание} \\ \hline
+    1 & Анализ литературы и предметной области & 12 & 02.09.2024--30.11.2024 & \\ \hline
+    2 & Постановка задачи и формирование требований к архитектуре & 10 & 01.12.2024--31.01.2025 & \\ \hline
+    3 & Проектирование и внедрение этапа с использованием NFS & 18 & 01.02.2025--31.05.2025 & \\ \hline
+    4 & Анализ ограничений NFS и разработка целевой P2P/FUSE-архитектуры & 18 & 01.06.2025--30.09.2025 & \\ \hline
+    5 & Разработка storage-agent, Redis-реестра и механизмов репликации чанков & 16 & 01.10.2025--31.12.2025 & \\ \hline
+    6 & Разработка storage-mounter и интеграция с ML-runtime & 14 & 01.01.2026--29.02.2026 & \\ \hline
+    7 & Нагрузочное тестирование, анализ результатов и оформление ВКР & 12 & 01.03.2026--24.05.2026 & \\ \hline
+    \end{tabularx}
+\end{table}
+
+\textbf{5. Исходные материалы и пособия}\\
+\fullcite{deepseekv4_2026}\\
+\fullcite{nfs_k8s_docs}\\
+\fullcite{redis_cluster_docs}\\
+\fullcite{fuse_kernel_docs}\\
+\fullcite{k8s_daemonset}
+
+\textbf{6. Дата выдачи задания} \uline{02.09.2024 \hfill}
+
+\makeTaskSignatures
+\end{document}
