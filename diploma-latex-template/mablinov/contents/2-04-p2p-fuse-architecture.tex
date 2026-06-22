@@ -172,7 +172,8 @@ Multicast DNS (RFC 6762) позволяет устройствам в локал
 \caption{Сравнение алгоритмов обнаружения узлов}
 \label{tab:discovery}
 \tablebodyfont
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{42mm}|>{\centering\arraybackslash}p{22mm}|>{\centering\arraybackslash}p{29mm}|>{\centering\arraybackslash}p{29mm}|}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}m{42mm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
 \hline
 \textbf{Критерий} & \textbf{Gossip} & \textbf{\shortstack{mDNS/\\Broadcast}} & \textbf{Redis heartbeat} \\ \hline
 Скорость lookup      & $O(\log N)$ раундов & Быстро (локальная сеть) & $O(1)$ \\ \hline

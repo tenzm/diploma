@@ -28,7 +28,8 @@
 \caption{Расчётный объём весов ключевых ML-моделей в формате FP16}
 \label{tab:model_sizes}
 \tablebodyfont
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{23mm}|>{\centering\arraybackslash}p{10mm}|>{\raggedright\arraybackslash}p{27mm}|>{\raggedleft\arraybackslash}p{22mm}|>{\raggedleft\arraybackslash}p{20mm}|>{\raggedright\arraybackslash}X|}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}m{23mm}|>{\centering\arraybackslash}m{10mm}|>{\raggedright\arraybackslash}m{27mm}|>{\raggedleft\arraybackslash}m{22mm}|>{\raggedleft\arraybackslash}m{20mm}|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{Модель} & \textbf{Год} & \textbf{\shortstack{Архитек-\\тура}} & \textbf{\shortstack{Пара-\\метры}} & \textbf{\shortstack{Вес\\(FP16)}} & \textbf{Влияние} \\ \hline
 AlexNet          & 2012 & CNN         & 60~млн    & $\approx$0.12~ГБ & Незначительное \\
