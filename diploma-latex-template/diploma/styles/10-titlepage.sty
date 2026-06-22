@@ -1,0 +1,226 @@
+% Author: CatInCosmicSpace
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{10-titlepage}[2021/03/21 v1.2 Титульный лист]
+
+\RequirePackage{expl3}
+\RequirePackage{xstring}
+\RequirePackage{etoolbox}
+
+\newcommand{\@makeVariableDefault}[2][warning]{
+    \ifstrequal{#1}{warning}{
+        \expandafter\newcommand\expandafter*\csname @#2\endcsname{
+            \@latex@warning@no@line{No \detokenize{#2} given}
+        }
+    }{
+        \ifstrequal{#1}{empty}{
+            \expandafter\newcommand\expandafter*\csname @#2\endcsname{}
+        }{
+        \ifstrequal{#1}{}{
+            \expandafter\newcommand\expandafter*\csname @#2\endcsname{}
+        }{
+            \expandafter\newcommand\expandafter*\csname @#2\endcsname{#1}
+        }
+        }
+    }
+}
+
+\newcommand{\@makeVariable}[2][warning]{
+    \expandafter\newcommand\expandafter*\csname #2\endcsname[1]{
+        \expandafter\renewcommand\expandafter*\csname @#2\endcsname{##1}
+    }
+    \@makeVariableDefault[#1]{#2}
+}
+
+\ExplSyntaxOn
+\newcommand{\makeShortname}[1]{
+    \seq_set_split:Nnn \l_tmpa_seq { ~ } { #1 }
+    \int_compare:nNnTF { \seq_count:N \l_tmpa_seq } = { 1 }
+        { #1 }
+        {
+        \seq_pop_left:NN \l_tmpa_seq \l_tmpa_first
+        \tl_clear:N \l_tmpa_tl
+        \seq_map_inline:Nn \l_tmpa_seq
+            {
+            \tl_put_right:Nx \l_tmpa_tl { \tl_head:n { ##1 } . }
+            }
+        \tl_put_right:Nx \l_tmpa_tl {\nobreakspace \l_tmpa_first}
+        \tl_use:N \l_tmpa_tl
+        }
+    }
+\ExplSyntaxOff
+
+\newcommand{\@makeVariableWithShortname}[2][warning]{
+    \expandafter\newcommand\expandafter*\csname #2\endcsname[2][]{
+        \expandafter\renewcommand\expandafter*\csname @#2\endcsname{##2}
+        \def\temp{##1}
+        \ifx\@empty\temp
+            \expandafter\renewcommand\expandafter*\csname @#2Short\endcsname{\makeShortname{##2}}
+        \else
+            \expandafter\renewcommand\expandafter*\csname @#2Short\endcsname{##1}
+        \fi
+    }
+    \@makeVariableDefault[#1]{#2}
+    \@makeVariableDefault[#1]{#2Short}
+}
+
+\newcommand{\@fullname}[1]{
+    \csname @#1\endcsname
+}
+
+\newcommand{\@shortname}[1]{
+    \csname @#1Short\endcsname
+}
+
+\newcommand{\@credentials}[1]{
+    \csname @#1Credentials\endcsname
+}
+
+% Поля для заполнения в ВКР
+% Информация о студенте
+\@makeVariableWithShortname{student}
+\@makeVariable{faculty}
+\@makeVariable{department}
+\@makeVariable{group}
+\@makeVariable{profile}
+\@makeVariable{speciality}
+
+% Информация о работе
+\@makeVariable{theme}
+\@makeVariable{workDate}
+\@makeVariable[empty]{similarityPercentage}
+
+% Информация об экспертах
+\@makeVariableWithShortname{supervisor}
+\@makeVariable[empty]{supervisorCredentials}
+
+\@makeVariableWithShortname[empty]{firstConsultant}
+\@makeVariable[empty]{firstConsultantCredentials}
+
+\@makeVariableWithShortname[empty]{secondConsultant}
+\@makeVariable[empty]{secondConsultantCredentials}
+
+\@makeVariableWithShortname[empty]{reviewer}
+\@makeVariable[empty]{reviewerCredentials}
+
+% Информация об институте
+\@makeVariableWithShortname{headOfDepartment}
+\@makeVariable{headOfDepartmentTitle}
+
+% Названия различных полей
+\@makeVariable{degree}
+\@makeVariable{workType}
+\@makeVariable{workTypeDat}
+\@makeVariable{workTypeAcc}
+\@makeVariable{workTypeShort}
+\@makeVariable{profileType}
+\@makeVariable{supervisorType}
+\@makeVariable{departmentType}
+
+
+\RequirePackage{fancyhdr}
+\fancypagestyle{year}{
+    \fancyfoot[C]{Москва \the\year}
+    \renewcommand{\headrulewidth}{0pt}
+    \fancyhead{}
+}
+
+\RequirePackage{tabto}
+\RequirePackage[normalem]{ulem}
+\RequirePackage[usestackEOL]{stackengine}
+\RequirePackage{lineno}
+\RequirePackage{ifthen}
+\RequirePackage{varwidth}
+
+\newcommand{\makeHeader}{
+    \noindent\begin{minipage}{0.05\textwidth}
+        \includegraphics[scale=0.4]{inc/mai.pdf}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.85\textwidth}\raggedleft
+        \begin{center}
+            \fontsize{11pt}{10pt}\selectfont
+            \textbf{МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ \\
+                РОССИЙСКОЙ ФЕДЕРАЦИИ \\
+                \hfill\break
+                ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ \\
+                ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ \\
+                <<МОСКОВСКИЙ АВИАЦИОННЫЙ ИНСТИТУТ
+            } \\
+            (национальный исследовательский университет)>>
+        \end{center}
+    \end{minipage}\\
+    \noindent\parbox[t][24pt][c]{\textwidth}{\rule{\textwidth}{1.5pt}}
+}
+
+\newcommand{\makeAffiliations}{
+    \fontsize{12pt}{16pt}\selectfont
+    \noindent
+    \textbf{Институт (Филиал)} \uline{\@faculty\hfill} \\
+    \textbf{\@departmentType} \uline{\@department\hfill} \\
+    \textbf{Группа} \uline{\@group} \textbf{Направление подготовки} \expandafter\uline\expandafter{\expanded{\@speciality}\hfill} \\
+    \textbf{\@profileType} \uline{\@profile\hfill} \\
+    \textbf{Квалификация:} \uline{\textbf{\@degree}\hfill}
+}
+
+\newcommand{\makeTheme}[1]{
+    \noindent На тему:
+    \expandafter\uline\expandafter{\expanded{#1}\hfill}
+}
+
+\newcommand{\signature}[1]{
+    (\uline{\hspace{#1}})
+}
+
+\newcommand{\fillTitle}{
+    \fontsize{12pt}{14pt}\selectfont
+    \vfill
+
+    % немного короче текста, чтобы добиться переноса последнего слова
+    \begin{minipage}{0.9\textwidth}
+        \centering\bfseries\fontsize{16pt}{18pt}\selectfont
+        \MakeUppercase{\@workType}
+    \end{minipage}
+
+    \vfill
+
+    \makeTheme{\@theme}
+
+    \vspace{2cm}
+
+    \begingroup
+        \setlength{\tabcolsep}{0pt}
+        \renewcommand{\arraystretch}{1.2}
+        \noindent\begin{tabularx}{\textwidth}{l>{\raggedright\arraybackslash}Xr}
+            \noindent Автор \@workTypeShort: \uline{\hfill} & \uline{\hspace{2cm} \@student          \hfill} & \signature{2cm} \\
+            \noindent \@supervisorType:      \uline{\hfill} & \uline{\hspace{2cm} \@supervisor       \hfill} & \signature{2cm} \\
+            \noindent Консультант:           \uline{\hfill} & \uline{\hspace{2cm} \@firstConsultant  \hfill} & \signature{2cm} \\
+            \noindent Консультант:           \uline{\hfill} & \uline{\hspace{2cm} \@secondConsultant \hfill} & \signature{2cm} \\
+            \noindent Рецензент:             \uline{\hfill} & \uline{\hspace{2cm} \@reviewer         \hfill} & \signature{2cm} \\
+        \end{tabularx}
+    \endgroup
+
+    \vspace{2cm}
+
+    \noindent \textbf{К защите допустить}
+
+    \medskip
+
+    \noindent \parbox[b]{0.4\textwidth}{\@headOfDepartmentTitle}\ \uline{\hfill \@headOfDepartment \hfill}\ \signature{2cm}
+
+    \noindent \@workDate
+
+    \vspace{2cm}
+}
+
+\renewcommand{\maketitle}{
+    \begin{titlepage}
+        \thispagestyle{year}
+        \makeHeader
+
+        \makeAffiliations
+
+        \fillTitle
+
+        \clearpage
+    \end{titlepage}
+}

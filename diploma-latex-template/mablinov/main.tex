@@ -1,0 +1,51 @@
+\documentclass[master, fontsize=14]{diploma}
+
+\input{info}
+\input{contents/glossary}
+\input{contents/terms}
+
+\graphicspath{{figures/}}
+
+\lstdefinelanguage{yaml}{
+  sensitive=false,
+  morecomment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]'
+}
+
+\addbibresource{main.bib}
+
+\makeatletter
+\renewcommand{\makeAffiliations}{
+    \fontsize{12pt}{16pt}\selectfont
+    \noindent
+    \textbf{Институт (Филиал)} \uline{\@faculty}\hspace{0.75em} \textbf{Кафедра} \uline{\@department} \\
+    \textbf{Группа} \uline{\@group} \textbf{Направление подготовки} \expandafter\uline\expandafter{\expanded{\@speciality}\hfill} \\
+    \textbf{\@profileType} \uline{\@profile\hfill} \\
+    \textbf{Квалификация:} \uline{\textbf{\@degree}\hfill}
+}
+\g@addto@macro\@floatboxreset\centering
+\makeatother
+
+\begin{document}
+    \maketitle
+
+    % \includepdf[pages=-]{task}
+    \setcounter{page}{2}
+
+    \include{contents/0-abstract}
+
+    \tableofcontents
+    \termsanddefenitions
+    \listofabbreviations
+
+    \include{contents/1-introduction}
+    \include{contents/2-01-cold-start-problem}
+    \include{contents/2-02-existing-solutions}
+    \include{contents/2-03-nfs-stage}
+    \include{contents/2-04-p2p-fuse-architecture}
+    \include{contents/2-05-evaluation}
+    \include{contents/3-conclusion}
+
+    \printbibliography
+\end{document}
