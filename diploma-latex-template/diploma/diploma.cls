@@ -61,7 +61,7 @@
     \workTypeDat{выпускной квалификационной работе}
     \workTypeAcc{выпускную квалификационную работу}
     \workTypeShort{ВКР}
-    \profileType{Программа}
+    \profileType{Профиль}
     \supervisorType{Научный руководитель}
 \fi
 

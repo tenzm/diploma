@@ -35,11 +35,11 @@ else
 fi
 
 if [[ "$CLEAN" -eq 1 ]]; then
-  LATEX_CMD="latexmk -C"
+  LATEX_CMD="latexmk -C main.tex && latexmk -C review.tex && latexmk -C supervisor_review.tex"
   echo "==> Cleaning build artifacts..."
 else
-  LATEX_CMD="latexmk -pdfxe -interaction=nonstopmode main.tex"
-  echo "==> Compiling diploma..."
+  LATEX_CMD="latexmk -pdfxe -interaction=nonstopmode main.tex && latexmk -pdfxe -interaction=nonstopmode review.tex && latexmk -pdfxe -interaction=nonstopmode supervisor_review.tex"
+  echo "==> Compiling diploma and review documents..."
 fi
 
 docker run --rm \
@@ -51,12 +51,30 @@ docker run --rm \
 
 if [[ "$CLEAN" -eq 0 ]]; then
   PDF="$DOC_DIR/main.pdf"
+  REVIEW_PDF="$DOC_DIR/review.pdf"
+  SUPERVISOR_REVIEW_PDF="$DOC_DIR/supervisor_review.pdf"
   if [[ -f "$PDF" ]]; then
     SIZE=$(du -h "$PDF" | cut -f1)
     echo ""
     echo "==> Done: $PDF ($SIZE)"
   else
     echo "==> Build finished but main.pdf not found — check logs above"
+    exit 1
+  fi
+
+  if [[ -f "$REVIEW_PDF" ]]; then
+    REVIEW_SIZE=$(du -h "$REVIEW_PDF" | cut -f1)
+    echo "==> Done: $REVIEW_PDF ($REVIEW_SIZE)"
+  else
+    echo "==> Build finished but review.pdf not found — check logs above"
+    exit 1
+  fi
+
+  if [[ -f "$SUPERVISOR_REVIEW_PDF" ]]; then
+    SUPERVISOR_REVIEW_SIZE=$(du -h "$SUPERVISOR_REVIEW_PDF" | cut -f1)
+    echo "==> Done: $SUPERVISOR_REVIEW_PDF ($SUPERVISOR_REVIEW_SIZE)"
+  else
+    echo "==> Build finished but supervisor_review.pdf not found — check logs above"
     exit 1
   fi
 fi

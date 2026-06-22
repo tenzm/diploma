@@ -464,3 +464,113 @@
 - Ключевые решения: график теперь показывает только главную мысль для устного комментария на слайде — длительность окна полной недоступности новых реплик при burst-старте. Смысловая нагрузка перенесена из самой картинки в простую шкалу и числовые подписи, чтобы изображение не конкурировало с текстом выступления.
 - Проверка объёма: текстовые файлы диплома не изменялись, повторная проверка `report_stats.py` не требовалась. `./run-new.sh` завершился успешно, итоговый `main.pdf` собран на 114 страницах; визуальная проверка PNG-рендера страницы 102 подтвердила корректную посадку упрощённого графика.
 - Следующий рекомендуемый шаг: при необходимости можно сделать вторую, ещё более презентационную версию этого же сюжета в формате таймлайна с иконками pod/runtime, не затрагивая дипломную версию рисунка
+
+## 2026-06-22 15:31 — Подготовка рецензии рецензента и сборки review.pdf
+
+- Статус: выполнено
+- Сгенерировано: создан файл `reviewer_review.md` с итоговым текстом рецензии на одну страницу; на основе шаблона `example/review.tex` подготовлен `diploma-latex-template/mablinov/review.tex`, в `info.tex` добавлены данные рецензента, а в `run-new.sh` включена сборка `review.pdf` вместе с основным дипломом
+- Файлы: `reviewer_review.md`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/info.tex`, `run-new.sh`, `diploma-latex-template/mablinov/review.pdf`, `tmp/pdfs/review.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальный комплект материалов для сдачи
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/example/review.tex`, `diploma-latex-template/example/consultant_review.tex`, `diploma-latex-template/diploma/review.sty`
+- Ключевые решения: текст рецензии переписан под тему диплома про cold start и распределённый кэш моделей, при этом сокращён до объёма, который стабильно помещается на один лист без изменения стилей шаблона. Для LaTeX-версии сохранён шаблонный ГОСТ-совместимый каркас, а ужатие выполнено только за счёт компактного текста и локальной настройки интервалов в `review.tex`.
+- Проверка объёма: `python3 scripts/report_stats.py reviewer_review.md diploma-latex-template/mablinov/review.tex` — `reviewer_review.md`: words=166 chars=1508, `review.tex`: words=160 chars=1472. `./run-new.sh` завершился успешно; `review.log` содержит `Output written on review.xdv (1 page, 25084 bytes)`, а PNG-превью `tmp/pdfs/review.pdf.png` визуально подтвердило корректную одностраничную вёрстку.
+- Следующий рекомендуемый шаг: при необходимости аналогично подготовить в `mablinov` отдельные PDF для отзыва руководителя и отзыва консультанта, чтобы весь комплект сопроводительных документов собирался одной командой
+
+## 2026-06-22 18:14 — Локальная правка шапки review.tex
+
+- Статус: выполнено
+- Сгенерировано: в `review.tex` локально переопределены макросы шапки рецензии так, чтобы строка рецензента выводилась в одну строку вместе с должностью, а блок аффилиации повторял исходный вид диплома с отдельной строкой `806` без подписи `Образовательный центр`
+- Файлы: `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/review.pdf`, `diploma-latex-template/mablinov/main.pdf`, `tmp/pdfs/review.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная доводка комплекта для сдачи
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/review.sty`, `diploma-latex-template/diploma/styles/10-titlepage.sty`, `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/info.tex`
+- Ключевые решения: глобальные стили шаблона не менялись; правка выполнена только локальными `\renewcommand` внутри `review.tex`, чтобы не затронуть основную сборку диплома и другие служебные документы. Для блока аффилиации сохранён визуальный паттерн исходной версии: сначала строка института, затем отдельная строка с номером `806`.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/review.tex` — words=259 chars=2343, что укладывается в лимит для 2 страниц. `./run-new.sh` завершился успешно; `review.log` содержит `Output written on review.xdv (2 pages, 32016 bytes)`, а PNG-превью `tmp/pdfs/review.pdf.png` визуально подтвердило, что строка рецензента не разбита, а `806` отображается без поля `Образовательный центр`.
+- Следующий рекомендуемый шаг: при необходимости аналогично локально подправить `consultant_review.tex` и другие сопроводительные документы, если требуется единый вид всех служебных форм
+
+## 2026-06-22 18:18 — Синхронизация блока «Образовательный центр» в review.tex с main.pdf
+
+- Статус: выполнено
+- Сгенерировано: в `review.tex` строка аффилиации возвращена к тому же виду, что и в `main.pdf`: `Институт (Филиал)` и отдельная строка `Образовательный центр № 806`; `review.pdf` пересобран и визуально сверен с титульной страницей основного диплома
+- Файлы: `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/review.pdf`, `tmp/pdfs/review.pdf.png`, `tmp/pdfs/main.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная унификация с основным комплектом
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`
+- Ключевые решения: вместо отдельной интерпретации шапки использована та же формула строки, что и в `main.tex`, а итог проверен не только по коду, но и по PNG-превью первого листа `main.pdf`. Это позволило точно повторить визуальную структуру исходного диплома в рецензии.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/review.tex` — words=262 chars=2371, что укладывается в лимит для 2 страниц. Сборка `review.tex` завершилась успешно; `review.log` содержит `Output written on review.xdv (2 pages, 32236 bytes)`, а визуальная проверка `tmp/pdfs/review.pdf.png` и `tmp/pdfs/main.pdf.png` подтвердила совпадение блока `Образовательный центр № 806`.
+- Следующий рекомендуемый шаг: при необходимости так же синхронизировать подписи и блоки аффилиации в остальных служебных документах, если они должны повторять титульный стиль `main.pdf`
+
+## 2026-06-22 18:30 — Добавление отзыва научного руководителя
+
+- Статус: выполнено
+- Сгенерировано: создан файл `diploma-latex-template/mablinov/supervisor_review.tex` по образцу `example/supervisor_review.tex`; текст отзыва руководителя написан на основе рецензии, но расширен и переформулирован под позицию научного руководителя. В `run-new.sh` добавлена сборка и очистка `supervisor_review.tex`, а итоговый `supervisor_review.pdf` успешно сгенерирован
+- Файлы: `diploma-latex-template/mablinov/supervisor_review.tex`, `run-new.sh`, `diploma-latex-template/mablinov/supervisor_review.pdf`, `tmp/pdfs/supervisor_review.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и полный комплект материалов для сдачи
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/example/supervisor_review.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/info.tex`
+- Ключевые решения: оформление `supervisor_review.tex` синхронизировано с текущими локальными правками `review.tex`, включая блок `Образовательный центр № 806` и шапку в стиле `main.pdf`. Для строки руководителя использован локальный вариант без `supervisorCredentials`, чтобы при пустом поле не появлялись лишние знаки препинания и переносы.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/supervisor_review.tex` — words=415 chars=3726, что укладывается в лимит для 2 страниц. Полная сборка `./run-new.sh` завершилась успешно; `supervisor_review.log` содержит `Output written on supervisor_review.xdv (2 pages, 45372 bytes)`, а PNG-превью `tmp/pdfs/supervisor_review.pdf.png` визуально подтвердило корректную двухстраничную вёрстку.
+- Следующий рекомендуемый шаг: при необходимости аналогично добавить и унифицировать остальные служебные документы (`consultant_review.tex`, задание, титульные формы), чтобы весь комплект собирался одной командой в едином стиле
+
+## 2026-06-22 18:40 — Доводка отзыва руководителя и шапки аффилиации
+
+- Статус: выполнено
+- Сгенерировано: в `supervisor_review.tex` возвращена строка `Работа проверена на объем заимствования. % заимствования – %`, сам отзыв руководителя переписан в виде одного сплошного текста без подразделов, а в локальных переопределениях `makeAffiliations` для `main.tex`, `review.tex` и `supervisor_review.tex` заменены растягиваемые пробелы на неразрывные в строках `Институт~(Филиал)` и `Образовательный~центр~№`
+- Файлы: `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`, `diploma-latex-template/mablinov/main.pdf`, `diploma-latex-template/mablinov/review.pdf`, `diploma-latex-template/mablinov/supervisor_review.pdf`, `tmp/pdfs/main.pdf.png`, `tmp/pdfs/supervisor_review.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная типографская унификация служебных форм
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`
+- Ключевые решения: строка про объём заимствований вынесена в отдельный абзац, чтобы она не сливалась со строкой руководителя; отзыв оставлен цельным без подзаголовков и маркированных блоков. Для уменьшения неестественного растяжения текста в шапке использованы неразрывные пробелы, что улучшило визуальное соответствие титульному оформлению без изменения общей структуры шаблона.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/main.tex diploma-latex-template/mablinov/review.tex diploma-latex-template/mablinov/supervisor_review.tex` — `main.tex`: words=133 chars=1230, `review.tex`: words=262 chars=2377, `supervisor_review.tex`: words=394 chars=3514. `./run-new.sh` завершился успешно; `supervisor_review.log` содержит `Output written on supervisor_review.xdv (2 pages, 43820 bytes)`, а свежие PNG-превью `tmp/pdfs/main.pdf.png` и `tmp/pdfs/supervisor_review.pdf.png` визуально подтвердили отдельную строку про заимствования и уменьшение растяжения в `Институт~(Филиал)`.
+- Следующий рекомендуемый шаг: при необходимости тем же приёмом можно локально убрать растягивание и в других многострочных служебных полях вроде `Наименование темы`, если захочется полностью выровнять типографику титульных документов
+
+## 2026-06-22 18:46 — Устранение растягивания строк в шапке
+
+- Статус: выполнено
+- Сгенерировано: в локальных переопределениях `makeAffiliations` для `main.tex`, `review.tex` и `supervisor_review.tex` блок аффилиации переведён в `\raggedright`, чтобы LaTeX перестал растягивать пробелы в строках `Институт (Филиал)` и `Направление подготовки`; после этого весь комплект PDF пересобран
+- Файлы: `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`, `diploma-latex-template/mablinov/main.pdf`, `diploma-latex-template/mablinov/review.pdf`, `diploma-latex-template/mablinov/supervisor_review.pdf`, `tmp/pdfs/main.pdf.png`, `tmp/pdfs/supervisor_review.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная типографская доводка титульных и отзывных форм
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/styles/10-titlepage.sty`, `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`
+- Ключевые решения: источник дефекта был не в самих словах, а в полном выравнивании абзаца, из-за которого TeX искусственно расширял интервалы между словами в коротких строках шапки. Исправление выполнено локально и не затронуло глобальные стили шаблона.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/main.tex diploma-latex-template/mablinov/review.tex diploma-latex-template/mablinov/supervisor_review.tex` — `main.tex`: words=133 chars=1230, `review.tex`: words=262 chars=2377, `supervisor_review.tex`: words=394 chars=3514. `./run-new.sh` завершился успешно; `main.log` содержит `Output written on main.xdv (114 pages, 2141872 bytes)`, `supervisor_review.log` содержит `Output written on supervisor_review.xdv (2 pages, 43816 bytes)`, а свежие PNG-превью `tmp/pdfs/main.pdf.png` и `tmp/pdfs/supervisor_review.pdf.png` визуально подтвердили, что строки шапки больше не растягиваются.
+- Следующий рекомендуемый шаг: при необходимости аналогично локально отключить растягивание в других служебных строках, если появятся похожие артефакты в заданиях или дополнительных отзывах
+
+## 2026-06-22 18:53 — Доводка длины подчёркиваний в шапке
+
+- Статус: выполнено
+- Сгенерировано: в локальных переопределениях `makeAffiliations` для `main.tex`, `review.tex` и `supervisor_review.tex` добавлено вычисление остатка ширины строки для полей `Институт (Филиал)`, `Образовательный центр №` и `Группа`, а поле `Направление подготовки` вынесено на отдельную строку с корректным переносом и подчёркиванием до правого края
+- Файлы: `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`, `diploma-latex-template/mablinov/main.pdf`, `diploma-latex-template/mablinov/review.pdf`, `diploma-latex-template/mablinov/supervisor_review.pdf`, `tmp/pdfs/main.pdf.png`, `tmp/pdfs/supervisor_review.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная типографская доводка титульных и отзывных форм
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/styles/10-titlepage.sty`, `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`
+- Ключевые решения: для коротких полей использован локальный макрос с вычислением доступной ширины строки, что позволило протянуть линию до правого поля без возврата к растягиванию пробелов. Для длинного поля `Направление подготовки` применён перенос на следующую строку внутри подчёркивания, чтобы сохранить читаемость и не выпускать текст за границу страницы.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/main.tex diploma-latex-template/mablinov/review.tex diploma-latex-template/mablinov/supervisor_review.tex` — `main.tex`: words=140 chars=1278, `review.tex`: words=269 chars=2425, `supervisor_review.tex`: words=401 chars=3562. `./run-new.sh` завершился успешно; `main.log` содержит `Output written on main.xdv (114 pages, 2141936 bytes)`, `supervisor_review.log` содержит `Output written on supervisor_review.xdv (2 pages, 43892 bytes)`, а свежие PNG-превью `tmp/pdfs/main.pdf.png` и `tmp/pdfs/supervisor_review.pdf.png` визуально подтвердили, что линии в шапке доходят до правого края и не выходят за пределы страницы.
+- Следующий рекомендуемый шаг: при необходимости тем же способом можно выровнять и остальные длинные поля служебных форм, например `Наименование темы`
+
+## 2026-06-22 19:05 — Уплотнение шапки и возврат полей в одну строку
+
+- Статус: выполнено
+- Сгенерировано: в `makeAffiliations` для `main.tex`, `review.tex` и `supervisor_review.tex` убраны избыточные вертикальные интервалы между полями, `Группа` и `Направление подготовки` снова сведены в одну первую строку, а `Профиль` возвращён к более компактному виду без большого горизонтального разрыва после заголовка
+- Файлы: `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`, `diploma-latex-template/mablinov/main.pdf`, `diploma-latex-template/mablinov/review.pdf`, `diploma-latex-template/mablinov/supervisor_review.pdf`, `tmp/pdfs/main.pdf.png`, `tmp/pdfs/supervisor_review.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная типографская доводка титульных и отзывных форм
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/styles/10-titlepage.sty`, `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`
+- Ключевые решения: табличная вёрстка была заменена на обычные строки с локальным `hangindent` для блока `Группа + Направление подготовки`, потому что это позволило одновременно убрать лишние интервалы, сохранить первую строку общей и не выпускать длинное значение специальности за правое поле. Для остальных полей использована компактная строковая запись с подчёркиванием до края строки.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/main.tex diploma-latex-template/mablinov/review.tex diploma-latex-template/mablinov/supervisor_review.tex` — `main.tex`: words=140 chars=1273, `review.tex`: words=269 chars=2420, `supervisor_review.tex`: words=401 chars=3557. `./run-new.sh` завершился успешно; `main.log` содержит `Output written on main.xdv (114 pages, 2142064 bytes)`, `review.log` содержит `Output written on review.xdv (2 pages, 32440 bytes)`, `supervisor_review.log` содержит `Output written on supervisor_review.xdv (2 pages, 44008 bytes)`, а свежие PNG-превью `tmp/pdfs/main.pdf.png` и `tmp/pdfs/supervisor_review.pdf.png` визуально подтвердили компактную шапку и корректный перенос длинного значения специальности.
+- Следующий рекомендуемый шаг: при необходимости тем же приёмом можно локально уплотнить и поле `Наименование темы`, если захочется ещё сильнее приблизить служебные формы к виду титульника
+
+## 2026-06-22 19:13 — Коррекция переноса направления подготовки в шапке
+
+- Статус: выполнено
+- Сгенерировано: в локальных переопределениях `makeAffiliations` для `main.tex`, `review.tex` и `supervisor_review.tex` убран `hangindent` у общей строки `Группа + Направление подготовки`, чтобы первая строка сохраняла оба поля вместе, а продолжение длинного значения специальности переносилось только по факту нехватки места и начиналось от левого края блока, а не под кодом `02.04.02`
+- Файлы: `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`, `diploma-latex-template/mablinov/main.pdf`, `diploma-latex-template/mablinov/review.pdf`, `diploma-latex-template/mablinov/supervisor_review.pdf`, `tmp/pdfs/main.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная типографская доводка титульных и отзывных форм
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`
+- Ключевые решения: сохранена компактная однострочная подача полей `Группа` и `Направление подготовки`, но логика подвешенного отступа удалена, поскольку именно она визуально привязывала перенос к значению `02.04.02`. Новый вариант лучше соответствует требованию: на новой строке оказывается только неуместившийся хвост длинного названия направления.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/main.tex diploma-latex-template/mablinov/review.tex diploma-latex-template/mablinov/supervisor_review.tex` — `main.tex`: words=134 chars=1224, `review.tex`: words=263 chars=2371, `supervisor_review.tex`: words=395 chars=3508. `./run-new.sh` завершился успешно; `main.log` содержит `Output written on main.xdv (114 pages, 2142060 bytes)`, `review.log` содержит `Output written on review.xdv (2 pages, 32432 bytes)`, `supervisor_review.log` содержит `Output written on supervisor_review.xdv (2 pages, 44000 bytes)`, а свежее превью `tmp/pdfs/main.pdf.png` визуально подтвердило перенос `информатика и информационные технологии` под блок `Группа`, а не под `02.04.02`.
+- Следующий рекомендуемый шаг: если потребуется ещё точнее приблизить шапку к эталонному макету, можно аналогично локально отрегулировать переносы для длинных тем и наименований в служебных формах
+
+## 2026-06-22 19:27 — Доводка подчёркивания направления подготовки в main.pdf
+
+- Статус: выполнено
+- Сгенерировано: в локальном переопределении `makeAffiliations` для `main.tex` отключено `\raggedright` только на титульнике, а подпись `Направление подготовки` зафиксирована как единый блок, чтобы первая строка поля в `main.pdf` снова доходила подчёркиванием до правого края без изменения уже согласованных `review.tex` и `supervisor_review.tex`
+- Файлы: `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/main.pdf`, `tmp/pdfs/main.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная типографская доводка титульных и отзывных форм
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/styles/10-titlepage.sty`, `diploma-latex-template/mablinov/main.tex`
+- Ключевые решения: проблема проявлялась только на титульном листе основной работы, поэтому исправление локализовано в `main.tex` и не затрагивает отзывы. Возврат обычного выравнивания для блока аффилиации позволил дотянуть многострочное подчёркивание до правого края, а фиксация ярлыка `Направление подготовки` как единого фрагмента не дала распасться подписи при перераспределении строки.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/main.tex` — `main.tex`: words=134 chars=1224. `./run-new.sh` завершился успешно; `main.log` содержит `Output written on main.xdv (114 pages, 2142068 bytes)`, а обновлённое превью `tmp/pdfs/main.pdf.png` визуально подтвердило, что строка с направлением подготовки в `main.pdf` теперь доходит до правого края.
+- Следующий рекомендуемый шаг: если захочется окончательно унифицировать поведение многострочных подчёркиваний между титульником и отзывами, можно тем же локальным способом отдельно довести и шапки review-документов
