@@ -1,11 +1,13 @@
 """
 generate3.py — финальная версия презентации диплома с встроенными графиками.
 
-Графики (6 штук) сохраняются в pptx/charts/ и вставляются в слайды:
+Графики (8 штук) сохраняются в pptx/charts/ и вставляются в слайды:
   Слайд 2  → chart_model_sizes.png          (рост размеров ML-моделей)
   Слайд 4  → chart_cold_start_breakdown.png  (фазы холодного старта)
   Слайд 9  → chart_tmodel_ready.png          (T_model_ready по сценариям)
              chart_external_traffic.png      (внешний трафик при масштабировании)
+             chart_loading_time_replicas.png (время подготовки burst-пакета реплик)
+             chart_loading_speed_replicas.png (совокупная скорость подготовки реплик)
   Слайд 10 → chart_availability.png          (доступность при репликации)
              chart_reliability.png           (деградация при отказах)
 
@@ -341,7 +343,85 @@ def chart_external_traffic():
     return save(fig,"chart_external_traffic.png")
 
 
-# ── 5. Доступность при репликации — простой в год (log-шкала) ────────────────
+# ── 5. Время подготовки burst-пакета реплик ──────────────────────────────────
+def chart_loading_time_replicas():
+    replicas = np.array([1, 2, 4, 6, 8, 10])
+    emptydir = np.array([74.8, 78.6, 85.9, 92.7, 100.4, 108.8])
+    nfs      = np.array([11.7, 24.3, 48.7, 73.4, 99.0, 124.8])
+    p2p      = np.array([13.1, 15.4, 18.9, 23.8, 28.7, 33.9])
+
+    with plt.rc_context(STYLE):
+        fig, ax = plt.subplots(figsize=(5.4, 3.6))
+        ax.plot(replicas, emptydir, "o-", color=C_RED, lw=2, ms=5, label="emptyDir")
+        ax.plot(replicas, nfs, "s--", color=C_ORG, lw=2, ms=5, label="NFS")
+        ax.plot(replicas, p2p, "^-", color=C_GRN, lw=2, ms=5, label="P2P + FUSE")
+        ax.annotate("Лимит NFS-сервера\nстановится доминирующим",
+                    xy=(8, 99.0), xytext=(3.8, 118),
+                    fontsize=8.2, color=C_ORG, fontweight="bold",
+                    arrowprops=dict(arrowstyle="->", color=C_ORG, lw=1.2,
+                                    connectionstyle="arc3,rad=-0.08"),
+                    bbox=dict(boxstyle="round,pad=0.25", facecolor="white",
+                              edgecolor=C_ORG, alpha=0.9))
+        ax.annotate("P2P масштабируется\nза счёт fan-out пиров",
+                    xy=(10, 33.9), xytext=(4.6, 9.0),
+                    fontsize=8.2, color=C_GRN, fontweight="bold",
+                    arrowprops=dict(arrowstyle="->", color=C_GRN, lw=1.2,
+                                    connectionstyle="arc3,rad=0.12"),
+                    bbox=dict(boxstyle="round,pad=0.25", facecolor="white",
+                              edgecolor=C_GRN, alpha=0.9))
+        ax.set_xlabel("Число одновременно стартующих реплик", fontsize=10)
+        ax.set_ylabel("Время до готовности всех реплик, с", fontsize=10)
+        ax.set_xticks(replicas)
+        ax.set_ylim(0, 140)
+        ax.legend(fontsize=8.8, loc="upper left")
+        ax.set_title("Burst-scale-out: время подготовки пакета реплик\n(DeepSeek-LLM 7B, 15 ГБ)", fontsize=10, pad=6)
+        fig.tight_layout()
+    return save(fig,"chart_loading_time_replicas.png")
+
+
+# ── 6. Совокупная скорость подготовки реплик ─────────────────────────────────
+def chart_loading_speed_replicas():
+    replicas = np.array([1, 2, 4, 6, 8, 10], dtype=float)
+    total_gb = replicas * 15.0
+    emptydir_time = np.array([74.8, 78.6, 85.9, 92.7, 100.4, 108.8])
+    nfs_time      = np.array([11.7, 24.3, 48.7, 73.4, 99.0, 124.8])
+    p2p_time      = np.array([13.1, 15.4, 18.9, 23.8, 28.7, 33.9])
+
+    emptydir_speed = total_gb / emptydir_time
+    nfs_speed      = total_gb / nfs_time
+    p2p_speed      = total_gb / p2p_time
+
+    with plt.rc_context(STYLE):
+        fig, ax = plt.subplots(figsize=(5.4, 3.6))
+        ax.plot(replicas, emptydir_speed, "o-", color=C_RED, lw=2, ms=5, label="emptyDir")
+        ax.plot(replicas, nfs_speed, "s--", color=C_ORG, lw=2, ms=5, label="NFS")
+        ax.plot(replicas, p2p_speed, "^-", color=C_GRN, lw=2, ms=5, label="P2P + FUSE")
+        ax.axhline(1.25, color=C_ORG, linewidth=1.0, linestyle=":", alpha=0.7)
+        ax.annotate("≈ 1.25 ГБ/с — потолок 10GbE для NFS",
+                    xy=(8.3, 1.25), xytext=(4.2, 1.52),
+                    fontsize=8, color=C_ORG,
+                    arrowprops=dict(arrowstyle="->", color=C_ORG, lw=1.0,
+                                    connectionstyle="arc3,rad=-0.12"),
+                    bbox=dict(boxstyle="round,pad=0.20", facecolor="white",
+                              edgecolor=C_ORG, alpha=0.92))
+        ax.annotate("Совокупная скорость растёт\nвместе с числом источников",
+                    xy=(10, p2p_speed[-1]), xytext=(5.0, 4.05),
+                    fontsize=8.2, color=C_GRN, fontweight="bold",
+                    arrowprops=dict(arrowstyle="->", color=C_GRN, lw=1.2,
+                                    connectionstyle="arc3,rad=0.08"),
+                    bbox=dict(boxstyle="round,pad=0.25", facecolor="white",
+                              edgecolor=C_GRN, alpha=0.9))
+        ax.set_xlabel("Число одновременно стартующих реплик", fontsize=10)
+        ax.set_ylabel("Совокупная скорость подготовки, ГБ/с", fontsize=10)
+        ax.set_xticks(replicas)
+        ax.set_ylim(0, 5.0)
+        ax.legend(fontsize=8.8, loc="upper left")
+        ax.set_title("Burst-scale-out: совокупная скорость загрузки\n(DeepSeek-LLM 7B, 15 ГБ)", fontsize=10, pad=6)
+        fig.tight_layout()
+    return save(fig,"chart_loading_speed_replicas.png")
+
+
+# ── 7. Доступность при репликации — простой в год (log-шкала) ────────────────
 def chart_availability():
     r_vals = np.array([1, 2, 3, 4, 5])
     a = 0.99
@@ -379,7 +459,7 @@ def chart_availability():
     return save(fig,"chart_availability.png")
 
 
-# ── 6. Деградация при сценариях отказов ──────────────────────────────────────
+# ── 8. Деградация при сценариях отказов ──────────────────────────────────────
 def chart_reliability():
     scenarios = ["Отказ\nworker-ноды","Недоступность\nRedis","Недоступность\nHF Hub"]
     nfs_impact = [100, 0, 100]   # % затронутых запросов
@@ -417,9 +497,11 @@ data_model_sizes   = chart_model_sizes()
 data_cold_start    = chart_cold_start_breakdown()
 data_tmodel_ready  = chart_tmodel_ready()
 data_ext_traffic   = chart_external_traffic()
+data_load_time     = chart_loading_time_replicas()
+data_load_speed    = chart_loading_speed_replicas()
 data_availability  = chart_availability()
 data_reliability   = chart_reliability()
-print(f"  Saved 6 PNG files to {CHARTS}/")
+print(f"  Saved 8 PNG files to {CHARTS}/")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
