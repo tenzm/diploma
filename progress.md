@@ -299,3 +299,25 @@
 - Ключевые решения: для научной согласованности введён единый источник `deepseekllm_2024`, а примеры 8B/70B-класса заменены на `DeepSeek-LLM 7B` и `DeepSeek-LLM 67B` с сохранением прежнего порядка оценок по объёму и трафику. Два PNG-графика с заголовками по экспериментам были перегенерированы, чтобы в визуальных артефактах также не осталось старых названий. Дополнительно термин `Meta Nodes` в обзоре CubeFS переведён на русский, чтобы в чистовом тексте не оставалось standalone `Meta`.
 - Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/contents` — `0-abstract.tex` words=233 chars=2113; `1-introduction.tex` words=1260 chars=10594; `2-01-cold-start-problem.tex` words=3019 chars=23984; `2-02-existing-solutions.tex` words=3121 chars=26354; `2-03-nfs-stage.tex` words=2849 chars=23309; `2-04-p2p-fuse-architecture.tex` words=6336 chars=50987; `2-05-evaluation.tex` words=1956 chars=14939; `3-conclusion.tex` words=790 chars=6578; `glossary.tex` words=248 chars=1987; `terms.tex` words=439 chars=3945. `./run-new.sh` завершился успешно; после пересборки точечный поиск по `diploma-latex-template/mablinov` не обнаружил `Llama` и standalone `Meta`
 - Следующий рекомендуемый шаг: при необходимости аналогично синхронизировать версии `result/` и `final/` с обновлённой линейкой `DeepSeek`, чтобы во всех производных артефактах использовать единые примеры моделей
+
+## 2026-06-22 04:38 — Уточнение примера топовой модели во введении `mablinov`
+
+- Статус: выполнено
+- Сгенерировано: во введении вместо перечисления нескольких крупных моделей оставлен только пример `DeepSeek V4 Pro`; формулировка скорректирована под терабайтный диапазон весов; PDF пересобран
+- Файлы: `diploma-latex-template/mablinov/contents/1-introduction.tex`, `diploma-latex-template/mablinov/main.pdf`
+- Основание из плана: `content/todo.md` — введение, подраздел «Актуальность темы»
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/mablinov/contents/1-introduction.tex`
+- Ключевые решения: правка выполнена локально в одном предложении введения, без изменения остальной аргументации по росту размеров моделей. Чтобы фраза оставалась согласованной с выбранным примером `DeepSeek V4 Pro`, диапазон размеров уточнён с «сотен гигабайт» до терабайтного уровня.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/contents/1-introduction.tex` — words=1255, chars=10569; в пределах лимита для введения. `./run-new.sh` завершился успешно.
+- Следующий рекомендуемый шаг: при необходимости аналогично унифицировать точечные примеры моделей в других местах диплома, если требуется везде акцентировать именно `DeepSeek V4 Pro`
+
+## 2026-06-22 04:45 — Добавление архитектурных схем в разделы `mablinov`
+
+- Статус: выполнено
+- Сгенерировано: схема исходного варианта с `storage-initializer + emptyDir` добавлена в раздел про NFS-этап, а схема целевой P2P/FUSE-архитектуры добавлена в вводную часть основного архитектурного раздела; после каждого рисунка включён аналитический абзац, связывающий изображение с текстом главы; PDF пересобран
+- Файлы: `diploma-latex-template/mablinov/contents/2-03-nfs-stage.tex`, `diploma-latex-template/mablinov/contents/2-04-p2p-fuse-architecture.tex`, `diploma-latex-template/mablinov/main.pdf`
+- Основание из плана: `content/todo.md` — раздел 3, пункт `6.1. Архитектура исходного решения storage-initializer + emptyDir`; раздел 4, пункт `7.1. Общая идея и требования к новой архитектуре`
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/mablinov/contents/2-03-nfs-stage.tex`, `diploma-latex-template/mablinov/contents/2-04-p2p-fuse-architecture.tex`, `diploma-latex-template/mablinov/figures/arch_base.png`, `diploma-latex-template/mablinov/figures/arch_target.png`
+- Ключевые решения: `arch_base.png` помещён сразу после описания жизненного цикла `emptyDir`, поскольку в этом месте требуется визуально зафиксировать локальный характер исходной схемы до перехода к разбору её ограничений. `arch_target.png` встроен в подраздел с общей идеей P2P/FUSE-архитектуры после описания трёх уровней системы, чтобы рисунок обобщал роли Redis, `storage-agent`, `storage-mounter`, UDS и межузлового P2P-обмена. По `.aux`-меткам итогового PDF рисунки зарегистрированы на страницах 45 и 61 соответственно.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/contents/2-03-nfs-stage.tex` — words=2902, chars=23735; `python3 scripts/report_stats.py diploma-latex-template/mablinov/contents/2-04-p2p-fuse-architecture.tex` — words=6408, chars=51581. `./run-new.sh` завершился успешно, `diploma-latex-template/mablinov/main.pdf` пересобран.
+- Следующий рекомендуемый шаг: при необходимости аналогично добавить и согласовать в тексте другие отсутствующие схемы из плана, например иллюстрацию сценария конкуренции pod за `Lease`, если требуется усилить раздел о координации загрузок
