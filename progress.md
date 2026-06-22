@@ -244,3 +244,14 @@
 - Ключевые решения: `\toprule/\midrule/\bottomrule` заменены на сеточное оформление через `|...|` и `\hline`, а глобальное подключение `booktabs` удалено. Для широких таблиц подобраны явные ширины колонок и локальные размеры шрифта, чтобы сохранить ГОСТ-верстку без выхода за поля. После пересборки визуально проверены страницы 18, 27, 41, 67, 91 и 93 нового PDF.
 - Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/contents` — `0-abstract.tex` words=243 chars=2195; `1-introduction.tex` words=1250 chars=10504; `2-01-cold-start-problem.tex` words=3035 chars=23961; `2-02-existing-solutions.tex` words=3120 chars=26324; `2-03-nfs-stage.tex` words=2849 chars=23309; `2-04-p2p-fuse-architecture.tex` words=6336 chars=50985; `2-05-evaluation.tex` words=1961 chars=14914; `3-conclusion.tex` words=790 chars=6578
 - Следующий рекомендуемый шаг: при необходимости таким же образом перенести финальный табличный стиль из `mablinov` в `docx`-версию диплома, сохранив исходные стили документа
+
+## 2026-06-22 03:41 — Переключение шаблона `example` в магистерский режим
+
+- Статус: выполнено
+- Сгенерировано: во все входные `.tex`-файлы шаблона `diploma-latex-template/example` добавлена опция класса `master`, чтобы основная работа, задание, раздатка и формы отзывов использовали магистерские обозначения шаблона
+- Файлы: `diploma-latex-template/example/main.tex`, `diploma-latex-template/example/handout.tex`, `diploma-latex-template/example/task.tex`, `diploma-latex-template/example/review.tex`, `diploma-latex-template/example/consultant_review.tex`, `diploma-latex-template/example/supervisor_review.tex`
+- Основание из плана: адаптация шаблона `example` под магистерскую ВКР по структуре нового оформления
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/diploma.cls`, `diploma-latex-template/example/*.tex`
+- Ключевые решения: для основного документа применено `\documentclass[master]{diploma}`, для раздатки — `\documentclass[master, handout]{diploma}`, для служебных форм — `\documentclass[master, fontsize=12pt]{diploma}`. Это сохраняет прежнюю структуру файлов и меняет только режим шаблона на магистерский.
+- Проверка объёма: не применялась, так как изменены только параметры класса шаблона и объём текстовых разделов диплома не менялся
+- Следующий рекомендуемый шаг: при необходимости пересобрать `example/main.pdf` и связанные служебные PDF, чтобы обновить готовые артефакты под магистерский режим
