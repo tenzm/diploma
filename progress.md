@@ -277,3 +277,25 @@
 - Ключевые решения: значение кафедры вынесено в `\department{806}`, чтобы жирным оставалась только подпись `Кафедра`, а номер кафедры оформлялся отдельным подчёркнутым полем стандартного начертания. Локальное переопределение `\makeAffiliations` сохранено только в `mablinov`, а результат дополнительно проверен по отрендеренной первой странице `main.pdf`.
 - Проверка объёма: не применялась, так как изменено только оформление титульного листа, а не текст разделов диплома
 - Следующий рекомендуемый шаг: при необходимости аналогично донастроить остальные подписи на титульном листе `mablinov`, не меняя общий шаблон
+
+## 2026-06-22 04:18 — Добавление абзацного отступа для ключевых слов в реферате `mablinov`
+
+- Статус: выполнено
+- Сгенерировано: для строки с ключевыми словами в реферате добавлен абзацный отступ локально в файле раздела; PDF пересобран после изменения
+- Файлы: `diploma-latex-template/mablinov/contents/0-abstract.tex`, `diploma-latex-template/mablinov/main.pdf`
+- Основание из плана: `content/todo.md` — раздел 1 «Реферат»
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/styles/12-abstract.sty`, `diploma-latex-template/mablinov/contents/0-abstract.tex`
+- Ключевые решения: общий шаблон `diploma` не изменялся; команда `\keywords` была локально переопределена только внутри `0-abstract.tex`, чтобы добавить стандартный абзацный отступ перед перечнем ключевых слов и не затронуть остальные документы шаблона.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/contents/0-abstract.tex` — words=241, chars=2159; в пределах лимита 1--2 страниц для реферата. `./run-new.sh` завершился успешно.
+- Следующий рекомендуемый шаг: при необходимости аналогично локально донастроить отступы и выравнивание остальных служебных блоков реферата `mablinov`
+
+## 2026-06-22 04:33 — Замена упоминаний `Llama`/`Meta` на линейку `DeepSeek` в `mablinov`
+
+- Статус: выполнено
+- Сгенерировано: в тексте диплома и библиографии удалены упоминания семейства `Llama` и вендора `Meta`; примеры моделей, таблица роста весов, экспериментальные сценарии и подписи графиков приведены к согласованной линейке `DeepSeek-LLM`/`DeepSeek`; итоговый PDF пересобран
+- Файлы: `diploma-latex-template/mablinov/main.bib`, `diploma-latex-template/mablinov/contents/1-introduction.tex`, `diploma-latex-template/mablinov/contents/2-01-cold-start-problem.tex`, `diploma-latex-template/mablinov/contents/2-02-existing-solutions.tex`, `diploma-latex-template/mablinov/contents/2-04-p2p-fuse-architecture.tex`, `diploma-latex-template/mablinov/contents/2-05-evaluation.tex`, `diploma-latex-template/mablinov/figures/chart_tmodel_ready.png`, `diploma-latex-template/mablinov/figures/chart_external_traffic.png`, `diploma-latex-template/mablinov/main.pdf`
+- Основание из плана: `content/todo.md` — введение, раздел 1 «Проблема холодного старта ML-моделей», раздел 2 «Анализ существующих решений», раздел 4 «Разработка P2P/FUSE-системы», раздел 5 «Оценка эффективности и надёжности»
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/mablinov/main.bib`, `diploma-latex-template/mablinov/contents/1-introduction.tex`, `diploma-latex-template/mablinov/contents/2-01-cold-start-problem.tex`, `diploma-latex-template/mablinov/contents/2-02-existing-solutions.tex`, `diploma-latex-template/mablinov/contents/2-04-p2p-fuse-architecture.tex`, `diploma-latex-template/mablinov/contents/2-05-evaluation.tex`, arXiv `DeepSeek LLM: Scaling Open-Source Language Models with Longtermism`
+- Ключевые решения: для научной согласованности введён единый источник `deepseekllm_2024`, а примеры 8B/70B-класса заменены на `DeepSeek-LLM 7B` и `DeepSeek-LLM 67B` с сохранением прежнего порядка оценок по объёму и трафику. Два PNG-графика с заголовками по экспериментам были перегенерированы, чтобы в визуальных артефактах также не осталось старых названий. Дополнительно термин `Meta Nodes` в обзоре CubeFS переведён на русский, чтобы в чистовом тексте не оставалось standalone `Meta`.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/contents` — `0-abstract.tex` words=233 chars=2113; `1-introduction.tex` words=1260 chars=10594; `2-01-cold-start-problem.tex` words=3019 chars=23984; `2-02-existing-solutions.tex` words=3121 chars=26354; `2-03-nfs-stage.tex` words=2849 chars=23309; `2-04-p2p-fuse-architecture.tex` words=6336 chars=50987; `2-05-evaluation.tex` words=1956 chars=14939; `3-conclusion.tex` words=790 chars=6578; `glossary.tex` words=248 chars=1987; `terms.tex` words=439 chars=3945. `./run-new.sh` завершился успешно; после пересборки точечный поиск по `diploma-latex-template/mablinov` не обнаружил `Llama` и standalone `Meta`
+- Следующий рекомендуемый шаг: при необходимости аналогично синхронизировать версии `result/` и `final/` с обновлённой линейкой `DeepSeek`, чтобы во всех производных артефактах использовать единые примеры моделей
