@@ -9,7 +9,37 @@
 
 \addbibresource{main.bib}
 
+\setmainfont{Times New Roman}
+\setsansfont{Times New Roman}
+\setmonofont{Times New Roman}
+\renewcommand{\texttt}[1]{{\normalfont\itshape #1}}
+
+\newcommand{\underlinedmaterial}[1]{%
+    \par\noindent\uline{#1}\par
+}
+
 \makeatletter
+\renewcommand{\makeHeader}{
+    \noindent\begin{minipage}{0.05\textwidth}
+        \includegraphics[scale=0.4]{inc/mai.pdf}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.85\textwidth}\raggedleft
+        \begin{center}
+            \fontsize{11pt}{10pt}\selectfont
+            \textbf{МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ \\
+                РОССИЙСКОЙ ФЕДЕРАЦИИ \\
+                \hfill\break
+                ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ \\
+                ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ \\
+                <<МОСКОВСКИЙ АВИАЦИОННЫЙ ИНСТИТУТ
+            } \\
+            (национальный исследовательский университет)>>
+        \end{center}
+    \end{minipage}\\
+    \noindent\parbox[t][24pt][c]{\textwidth}{\rule{\textwidth}{1.5pt}}
+}
+
 \renewcommand{\makeAffiliations}{
     \begingroup
     \fontsize{12pt}{14pt}\selectfont
@@ -27,6 +57,19 @@
 \renewcommand{\makeSupervisorLine}{
     \textbf{Руководитель} \uline{\@supervisor\hfill}
 }
+
+\renewcommand{\fillTaskHeader}{
+    \makeHeader
+    \makeAffiliations
+
+    \makeHeadOfDepartmentSignature
+
+    \makeTitle{ЗАДАНИЕ\\на \@workTypeAcc}
+
+    \makeStudentLine
+
+    \makeSupervisorLine
+}
 \makeatother
 
 \begin{document}
@@ -36,16 +79,8 @@
 
 \textbf{2. Срок сдачи обучающимся законченной работы} \uline{24.05.2026 \hfill}
 
-\textbf{3. Задание и исходные данные к работе}\\
-Провести анализ причин холодного старта моделей машинного обучения в бессерверном
-инференсе Kubernetes, исследовать существующие решения для совместного хранения и
-кэширования весов моделей, разработать и обосновать архитектуру распределённого
-кэширования с этапом NFS и целевой P2P/FUSE-системой, реализовать компоненты
-\texttt{storage-agent} и \texttt{storage-mounter}, выполнить нагрузочное сравнение
-с подходами \texttt{emptyDir} и NFS. Исходными данными являются публикации по
-\texttt{serverless} ML inference, распределённым файловым системам и кэшированию,
-исходный код реализованных компонентов, результаты экспериментального тестирования и
-материалы итоговой презентации.
+\textbf{3. Задание и исходные данные к работе}
+\underlinedmaterial{Провести анализ причин холодного старта моделей машинного обучения в бессерверном inference Kubernetes, исследовать существующие решения для совместного хранения и кэширования весов моделей, разработать и обосновать архитектуру распределённого кэширования с этапом NFS и целевой P2P/FUSE-системой, реализовать компоненты \texttt{storage-agent} и \texttt{storage-mounter}, выполнить нагрузочное сравнение с подходами \texttt{emptyDir} и NFS. Исходными данными являются публикации по \textit{serverless} \textit{ML inference}, распределённым файловым системам и кэшированию, исходный код реализованных компонентов, результаты экспериментального тестирования и материалы итоговой презентации.}
 
 \textbf{Перечень иллюстративно-графических материалов:}
 \vspace{\parskip}
@@ -88,12 +123,12 @@
     \end{tabularx}
 \end{table}
 
-\textbf{5. Исходные материалы и пособия}\\
-\fullcite{deepseekv4_2026}\\
-\fullcite{nfs_k8s_docs}\\
-\fullcite{redis_cluster_docs}\\
-\fullcite{fuse_kernel_docs}\\
-\fullcite{k8s_daemonset}
+\textbf{5. Исходные материалы и пособия}
+\underlinedmaterial{DeepSeek-AI. DeepSeek-V4-Pro. 2026.}
+\underlinedmaterial{Kubernetes Authors. Configure a Pod to Use a PersistentVolume for Storage. 2024.}
+\underlinedmaterial{Redis Labs. Redis Cluster Specification. 2024.}
+\underlinedmaterial{Szeredi M. FUSE: Filesystem in Userspace // Linux Symposium. 2010. P. 267--278.}
+\underlinedmaterial{Kubernetes Authors. DaemonSet in Kubernetes. 2024.}
 
 \textbf{6. Дата выдачи задания} \uline{02.09.2024 \hfill}
 

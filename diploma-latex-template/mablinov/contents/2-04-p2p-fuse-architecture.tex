@@ -168,9 +168,8 @@ Multicast DNS (RFC 6762) позволяет устройствам в локал
 Каждый \texttt{storage-agent} периодически обновляет запись о себе в Redis с TTL. Поиск активных агентов сводится к одному \texttt{SCAN} по префиксу \texttt{node:*} или \texttt{SMEMBERS} для конкретного чанка. Это обеспечивает время поиска $O(1)$, что принципиально отличает Redis heartbeat от Gossip ($O(\log N)$ раундов).
 
 \begin{table}[htbp]
+\gosttablecaption{tab:discovery}{Сравнение алгоритмов обнаружения узлов}
 \centering
-\caption{Сравнение алгоритмов обнаружения узлов}
-\label{tab:discovery}
 \tablebodyfont
 \renewcommand{\tabularxcolumn}[1]{m{#1}}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}m{42mm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
@@ -370,9 +369,8 @@ TCP используется для связи \texttt{storage-agent $\to$ stora
 Контроль перегрузки TCP (алгоритмы CUBIC, BBR) автоматически адаптирует скорость передачи к доступной пропускной способности канала и реагирует на потери пакетов. Это особенно важно при одновременной P2P-передаче нескольких чанков между несколькими парами нод: TCP предотвращает перегрузку коммутаторов датацентра.
 
 \begin{table}[htbp]
+\gosttablecaption{tab:uds_tcp}{Сравнение UDS и TCP в контексте системы}
 \centering
-\caption{Сравнение UDS и TCP в контексте системы}
-\label{tab:uds_tcp}
 \tablebodyfont
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{45mm}|>{\centering\arraybackslash}p{35mm}|>{\centering\arraybackslash}X|}
 \hline

@@ -4,17 +4,21 @@
 
 \input{info}
 
+\setmainfont{Times New Roman}
+\setsansfont{Times New Roman}
+\setmonofont{Times New Roman}
+\renewcommand{\texttt}[1]{{\normalfont\itshape #1}}
+
 \makeatletter
 \renewcommand{\makeAffiliations}{
     \begingroup
     \fontsize{12pt}{14pt}\selectfont
     \setlength{\parskip}{0pt}
-    \raggedright
-    \noindent\textbf{Институт~(Филиал)} \expandafter\uline\expandafter{\expanded{\@faculty}\hfill}\par
-    \noindent\textbf{Образовательный~центр~№} \uline{\@department\hfill}\par
-    \noindent\textbf{Группа } \uline{\@group}\hspace{0.8em}\textbf{Направление~подготовки }%
-    \expandafter\uline\expandafter{\expanded{\@speciality}\hfill}\par
-    \noindent\textbf{\@profileType} \uline{\@profile\hfill}\par
+    \noindent\textbf{Институт~(Филиал)} \expandafter\uline\expandafter{\expanded{\@faculty}\hfill} \\
+    \textbf{Образовательный~центр~№} \uline{\@department\hfill} \\
+    \textbf{Группа} \uline{\@group} \textbf{Направление подготовки} %
+    \expandafter\uline\expandafter{\expanded{\@speciality}\hfill} \\
+    \textbf{\@profileType} \uline{\@profile\hfill} \\
     \noindent\textbf{Квалификация:} \uline{\textbf{\@degree}\hfill}\par
     \endgroup
 }

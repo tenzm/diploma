@@ -35,10 +35,10 @@ else
 fi
 
 if [[ "$CLEAN" -eq 1 ]]; then
-  LATEX_CMD="latexmk -C main.tex && latexmk -C review.tex && latexmk -C supervisor_review.tex && latexmk -C task.tex"
+  LATEX_CMD="latexmk -C main.tex && latexmk -C review.tex && latexmk -C supervisor_review.tex && latexmk -C task.tex && latexmk -C handout.tex"
   echo "==> Cleaning build artifacts..."
 else
-  LATEX_CMD="latexmk -pdfxe -interaction=nonstopmode main.tex && latexmk -pdfxe -interaction=nonstopmode review.tex && latexmk -pdfxe -interaction=nonstopmode supervisor_review.tex && latexmk -pdfxe -interaction=nonstopmode task.tex"
+  LATEX_CMD="latexmk -pdfxe -interaction=nonstopmode main.tex && latexmk -pdfxe -interaction=nonstopmode review.tex && latexmk -pdfxe -interaction=nonstopmode supervisor_review.tex && latexmk -pdfxe -interaction=nonstopmode task.tex && latexmk -pdfxe -interaction=nonstopmode handout.tex"
   echo "==> Compiling diploma and service documents..."
 fi
 
@@ -54,6 +54,7 @@ if [[ "$CLEAN" -eq 0 ]]; then
   REVIEW_PDF="$DOC_DIR/review.pdf"
   SUPERVISOR_REVIEW_PDF="$DOC_DIR/supervisor_review.pdf"
   TASK_PDF="$DOC_DIR/task.pdf"
+  HANDOUT_PDF="$DOC_DIR/handout.pdf"
   if [[ -f "$PDF" ]]; then
     SIZE=$(du -h "$PDF" | cut -f1)
     echo ""
@@ -84,6 +85,14 @@ if [[ "$CLEAN" -eq 0 ]]; then
     echo "==> Done: $TASK_PDF ($TASK_SIZE)"
   else
     echo "==> Build finished but task.pdf not found — check logs above"
+    exit 1
+  fi
+
+  if [[ -f "$HANDOUT_PDF" ]]; then
+    HANDOUT_SIZE=$(du -h "$HANDOUT_PDF" | cut -f1)
+    echo "==> Done: $HANDOUT_PDF ($HANDOUT_SIZE)"
+  else
+    echo "==> Build finished but handout.pdf not found — check logs above"
     exit 1
   fi
 fi

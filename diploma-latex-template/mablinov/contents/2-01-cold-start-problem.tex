@@ -24,9 +24,8 @@
 Тенденция к открытым моделям, усиленная развитием семейства DeepSeek, расширила доступ исследователей и производственных команд к крупным моделям. В работе DeepSeek-LLM рассматриваются конфигурации 7B и 67B параметров, а расчётный объём основных весов варианта DeepSeek-LLM~67B в формате FP16 составляет около 134~ГБ~\cite{deepseekllm_2024}. Следующее поколение, DeepSeek~V2, уже переходит в диапазон сотен миллиардов параметров~\cite{deepseekv2_2024}.
 
 \begin{table}[htbp]
+\gosttablecaption{tab:model_sizes}{Расчётный объём весов ключевых ML-моделей в формате FP16}
 \centering
-\caption{Расчётный объём весов ключевых ML-моделей в формате FP16}
-\label{tab:model_sizes}
 \tablebodyfont
 \renewcommand{\tabularxcolumn}[1]{m{#1}}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}m{23mm}|>{\centering\arraybackslash}m{10mm}|>{\raggedright\arraybackslash}m{27mm}|>{\raggedleft\arraybackslash}m{22mm}|>{\raggedleft\arraybackslash}m{20mm}|>{\raggedright\arraybackslash}X|}
@@ -196,9 +195,8 @@ T_{\mathrm{keep}} \geq -\frac{\ln \varepsilon}{\lambda}.
 Таблица~\ref{tab:cold_start_components} иллюстрирует ориентировочный вклад различных компонентов в суммарную задержку холодного старта для модели с 8 и 70~миллиардами параметров при типичных конфигурациях. Следует подчеркнуть, что приведённые значения носят оценочный характер и существенно зависят от пропускной способности сети, производительности дискового ввода-вывода и конкретного inference-движка.
 
 \begin{table}[htbp]
+\gosttablecaption{tab:cold_start_components}{Ориентировочный вклад фаз холодного старта (оценочные данные)}
 \centering
-\caption{Ориентировочный вклад фаз холодного старта (оценочные данные)}
-\label{tab:cold_start_components}
 \tablebodyfont
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{23mm}|>{\centering\arraybackslash}p{23mm}|>{\raggedright\arraybackslash}p{28mm}|}
 \hline

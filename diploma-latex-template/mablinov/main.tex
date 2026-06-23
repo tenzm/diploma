@@ -6,6 +6,11 @@
 
 \graphicspath{{figures/}}
 
+\setmainfont{Times New Roman}
+\setsansfont{Times New Roman}
+\setmonofont{Times New Roman}
+\renewcommand{\texttt}[1]{{\normalfont\itshape #1}}
+
 \lstdefinelanguage{yaml}{
   sensitive=false,
   morecomment=[l]{\#},
@@ -28,7 +33,6 @@
     \noindent\textbf{Квалификация:} \uline{\textbf{\@degree}\hfill}\par
     \endgroup
 }
-\g@addto@macro\@floatboxreset\centering
 \makeatother
 
 \newcommand{\predheading}[1]{%
@@ -42,33 +46,52 @@
     \setstretch{1.0}\selectfont
 }
 
+\newcommand{\gostcaptionstyle}{%
+    \fontsize{14pt}{14pt}\selectfont
+    \setstretch{1.0}\selectfont
+}
+
+\newcommand{\gosttablecaption}[2]{%
+    \refstepcounter{table}%
+    \label{#1}%
+    \par\vspace{12pt}%
+    \noindent\parbox[t]{\textwidth}{\gostcaptionstyle\raggedright Таблица~\thetable~-- #2\par}%
+    \vspace{6pt}%
+}
+
 \DeclareCaptionFont{gostcaptionfont}{%
     \fontsize{14pt}{14pt}\selectfont
     \setstretch{1.0}\selectfont
 }
-\DeclareCaptionLabelFormat{gosttablelabel}{Таблица~#2}
-\DeclareCaptionFormat{gosttableformat}{\hfill#1#2\par\raggedright#3}
 
 \captionsetup[figure]{
-    font={gostcaptionfont,bf},
-    justification=raggedright,
+    name=Рисунок,
+    font=gostcaptionfont,
+    labelfont=normalfont,
+    textfont=normalfont,
+    justification=centering,
     singlelinecheck=false,
     labelsep=endash,
+    format=plain,
     width=\textwidth,
     aboveskip=12pt,
-    belowskip=6pt
+    belowskip=6pt,
+    position=below
 }
 
 \captionsetup[table]{
-    font={gostcaptionfont,bf},
-    labelformat=gosttablelabel,
-    labelsep=none,
-    format=gosttableformat,
+    name=Таблица,
+    font=gostcaptionfont,
+    labelfont=normalfont,
+    textfont=normalfont,
+    labelsep=endash,
+    format=plain,
     justification=raggedright,
     singlelinecheck=false,
     width=\textwidth,
     aboveskip=12pt,
-    belowskip=6pt
+    belowskip=6pt,
+    position=above
 }
 
 \titleformat{\structure}[hang]{\clearpage\fontsize{14pt}{14pt}\selectfont\bfseries\raggedright}{}{0pt}{}

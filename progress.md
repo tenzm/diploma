@@ -258,6 +258,17 @@
 
 ## 2026-06-22 03:51 — Корректировка строки института и кафедры на титульном листе `mablinov`
 
+## 2026-06-22 23:42 — Унификация шрифтов и подписей рисунков/таблиц в `mablinov`
+
+- Статус: выполнено
+- Сгенерировано: обновлены правила оформления основного диплома и служебных PDF; пересобраны `main.pdf`, `task.pdf`, `review.pdf`, `supervisor_review.pdf`
+- Файлы: `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/task.tex`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`, `diploma-latex-template/mablinov/contents/2-01-cold-start-problem.tex`, `diploma-latex-template/mablinov/contents/2-02-existing-solutions.tex`, `diploma-latex-template/mablinov/contents/2-04-p2p-fuse-architecture.tex`, `diploma-latex-template/mablinov/contents/2-05-evaluation.tex`, `diploma-latex-template/mablinov/main.pdf`, `diploma-latex-template/mablinov/task.pdf`, `run-new.sh`
+- Основание из плана: финальная доводка оформления диплома и сопроводительных документов в структуре `diploma-latex-template/mablinov`
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/styles/01-base.sty`, `diploma-latex-template/diploma/task.sty`, `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/task.tex`, `diploma-latex-template/mablinov/contents/*.tex`
+- Ключевые решения: для всех документов `mablinov` зафиксированы шрифты семейства Times New Roman и перевод инлайновых англоязычных техтерминов в обычный курсив через локальное переопределение `\texttt`. Подписи рисунков приведены к виду `Рисунок N – ...` обычным шрифтом по центру, а подписи таблиц — к виду `Таблица N – ...` обычным шрифтом без жирного выделения; для таблиц введён собственный макрос заголовка, чтобы получить стабильное однострочное оформление. В `task.tex` отдельно подчеркнут заголовок «ЗАДАНИЕ», подчеркнуты строки раздела «Исходные материалы и пособия», после чего все PDF были пересобраны и визуально проверены через рендер страниц в PNG.
+- Объём проверен: `python3 scripts/report_stats.py diploma-latex-template/mablinov/contents` — `0-abstract.tex` words=233 chars=2113; `1-introduction.tex` words=1264 chars=10656; `2-01-cold-start-problem.tex` words=3049 chars=24331; `2-02-existing-solutions.tex` words=3124 chars=26379; `2-03-nfs-stage.tex` words=2981 chars=24317; `2-04-p2p-fuse-architecture.tex` words=6533 chars=52583; `2-05-evaluation.tex` words=2397 chars=18608; `3-conclusion.tex` words=790 chars=6578
+- Следующий рекомендуемый шаг: при необходимости пройтись по оставшимся некурсивным англоязычным именам собственным в основном тексте вручную, если требуется уже не только типографская, но и полная стилистическая русификация обозначений
+
 - Статус: выполнено
 - Сгенерировано: для `diploma-latex-template/mablinov` переопределена верстка блока аффилиации на титульном листе; `Кафедра 806` перенесена на одну строку с институтом, убрано подчёркивание у кафедры, добавлено жирное начертание; пересобран и визуально проверен PDF
 - Файлы: `diploma-latex-template/mablinov/main.tex`, `diploma-latex-template/mablinov/main.pdf`
@@ -607,3 +618,57 @@
 - Ключевые решения: презентация была разобрана по текстовому наполнению слайдов, после чего 17 слайдов сведены в укрупнённые блоки для таблицы: титульный слайд, актуальность, цель и задачи, исходная архитектура, существующие решения, требования, технологии, архитектура решения, экспериментальное сравнение и итоговые выводы. Локальная подмена группы и кафедры выполнена только в `task.tex`, поэтому остальные документы комплекта не затронуты.
 - Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/task.tex` — `task.tex`: words=317 chars=2701. `./run-new.sh` завершился успешно; `task.log` содержит `Output written on task.xdv (3 pages, 43772 bytes)`. Для обхода кэша Quick Look создано свежее превью `tmp/pdfs/fresh/task-check-1952.pdf.png`, которое визуально подтвердило строку `Кафедра 806`, группу `М8О-109СВ-24` и замену заглушки на содержательный текст задания.
 - Следующий рекомендуемый шаг: при необходимости можно следующей правкой уменьшить объём первого блока `Задание и исходные данные к работе`, если захочется вернуть `task.pdf` к более компактной двухстраничной форме
+
+## 2026-06-22 23:22 — Замена типа учреждения только в task.pdf
+
+- Статус: выполнено
+- Сгенерировано: в `task.tex` локально переопределён `\makeHeader`, чтобы только в `task.pdf` строка `ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ` была заменена на `ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ`
+- Файлы: `diploma-latex-template/mablinov/task.tex`, `diploma-latex-template/mablinov/task.pdf`, `tmp/pdfs/fresh3/task-budgetary-check.pdf.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и полный комплект материалов для сдачи
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/styles/10-titlepage.sty`, `diploma-latex-template/mablinov/task.tex`
+- Ключевые решения: изменение внесено через локальное переопределение шапки внутри `task.tex`, поэтому `main.pdf`, `review.pdf` и `supervisor_review.pdf` сохраняют прежнюю формулировку. Для проверки использовано свежее превью с новым именем файла, чтобы исключить влияние кэша Quick Look.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/task.tex` — `task.tex`: words=350 chars=3033. `./run-new.sh` завершился успешно; `task.log` содержит `Output written on task.xdv (3 pages, 43760 bytes)`, а `tmp/pdfs/fresh3/task-budgetary-check.pdf.png` визуально подтвердило появление слова `БЮДЖЕТНОЕ` в шапке.
+- Следующий рекомендуемый шаг: при необходимости можно тем же локальным способом скорректировать и другие служебные строки только для `task.pdf`, не затрагивая остальной комплект документов
+
+## 2026-06-22 23:46 — Перенос подчеркивания на текст пункта задания в task.pdf
+
+- Статус: выполнено
+- Сгенерировано: в `task.tex` снято подчеркивание с заголовка `ЗАДАНИЕ` и со слова `Задание` в названии пункта 3; подчеркивание перенесено на сам текст раздела `Задание и исходные данные к работе`
+- Файлы: `diploma-latex-template/mablinov/task.tex`, `diploma-latex-template/mablinov/task.pdf`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная доводка служебных форм
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/mablinov/task.tex`
+- Ключевые решения: правка выполнена точечно, без изменения структуры документа: заголовки вернулись к обычному виду, а смысловое подчеркивание перенесено на содержательный абзац пункта 3, как требуется по замечанию пользователя. Пересборка выполнена через `./run-new.sh`, чтобы обновить `task.pdf` без влияния на остальные документы комплекта.
+- Следующий рекомендуемый шаг: при необходимости можно следующим проходом так же локально уточнить длину и плотность подчеркнутого текста пункта 3, если потребуется сделать его визуально компактнее на странице
+
+## 2026-06-23 12:42 — Добавление раздаточного материала в комплект mablinov
+
+- Статус: выполнено
+- Сгенерировано: в директорию `diploma-latex-template/mablinov` добавлен документ `handout.tex` по образцу `example/handout.tex`, а `run-new.sh` расширен сборкой и очисткой `handout.pdf` вместе с остальными служебными документами
+- Файлы: `diploma-latex-template/mablinov/handout.tex`, `run-new.sh`, `diploma-latex-template/mablinov/handout.pdf`, `tmp/pdfs/handout-page1.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и полный комплект материалов для сдачи
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/example/handout.tex`, `run-new.sh`
+- Ключевые решения: для сохранения оформления без расхождений раздаточный материал перенесён в `mablinov` без изменения структуры шаблона и использует те же `info.tex` и класс `diploma` в режиме `master, handout`. Скрипт сборки обновлён так, чтобы `handout.pdf` автоматически создавался и проверялся наряду с `main.pdf`, `review.pdf`, `supervisor_review.pdf` и `task.pdf`.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/handout.tex` — `handout.tex`: words=4 chars=30. `./run-new.sh` завершился успешно и создал `diploma-latex-template/mablinov/handout.pdf`; визуальная проверка через `pdftoppm` подтвердила корректный рендер первой страницы в `tmp/pdfs/handout-page1.png`.
+- Следующий рекомендуемый шаг: при необходимости можно отдельно подправить содержимое `info.tex` или локальные переопределения именно для `handout.pdf`, если понадобится особая версия раздаточного титульного листа
+
+## 2026-06-23 12:46 — Возврат подписи образовательного центра в раздаточный материал
+
+- Статус: выполнено
+- Сгенерировано: в `info.tex` добавлен тип подразделения `Образовательный центр №`, благодаря чему в документах без локального переопределения вместо голого `806` теперь выводится строка `Образовательный центр № 806`
+- Файлы: `diploma-latex-template/mablinov/info.tex`, `diploma-latex-template/mablinov/handout.pdf`, `tmp/pdfs/handout-page1-oc806.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная доводка служебных форм
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/diploma/styles/10-titlepage.sty`, `diploma-latex-template/mablinov/info.tex`
+- Ключевые решения: правка выполнена через общий параметр `\departmentType`, уже поддерживаемый классом `diploma`, поэтому изменение легло в штатную структуру шаблона без ручного патча `handout.tex`. Локальные переопределения в `main.tex`, `review.tex`, `supervisor_review.tex` и `task.tex` сохранены, поэтому их специфическое оформление не нарушено.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/info.tex` — `info.tex`: words=62 chars=534. `./run-new.sh` завершился успешно; визуальная проверка `diploma-latex-template/mablinov/handout.pdf` через `pdftoppm` подтвердила появление строки `Образовательный центр № 806` на первой странице (`tmp/pdfs/handout-page1-oc806.png`).
+- Следующий рекомендуемый шаг: при необходимости можно таким же способом вернуть или поменять тип подразделения и в других служебных формах, где используется базовый `\makeAffiliations`
+
+## 2026-06-23 12:51 — Выравнивание блока направления подготовки в review.pdf и supervisor_review.pdf
+
+- Статус: выполнено
+- Сгенерировано: в `review.tex` и `supervisor_review.tex` блок `Группа / Направление подготовки` приведён к той же схеме верстки, что и в `handout.pdf`: убраны локальные отличия с `\raggedright`, `\hspace` и разрывами через `\par`, вместо них возвращены строковые разрывы и структура базового шаблона
+- Файлы: `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`, `diploma-latex-template/mablinov/review.pdf`, `diploma-latex-template/mablinov/supervisor_review.pdf`, `tmp/pdfs/review-page1-fixed.png`, `tmp/pdfs/supervisor-review-page1-fixed.png`
+- Основание из плана: `content/todo.md` — сопроводительные документы к ВКР и финальная доводка служебных форм
+- Использованные материалы: `prompt.md`, `content/todo.md`, `progress.md`, `diploma-latex-template/mablinov/review.tex`, `diploma-latex-template/mablinov/supervisor_review.tex`, `diploma-latex-template/mablinov/handout.pdf`, `diploma-latex-template/diploma/styles/10-titlepage.sty`
+- Ключевые решения: вместо частичной ручной разметки в двух отзывах использована та же логика построения строк, что и в эталонном `handout`, чтобы подчеркнутая линия у поля `Направление подготовки` доходила и переносилась согласованно. Остальной текст отзывов и их структура не изменялись.
+- Проверка объёма: `python3 scripts/report_stats.py diploma-latex-template/mablinov/review.tex diploma-latex-template/mablinov/supervisor_review.tex` — `review.tex`: words=273 chars=2432; `supervisor_review.tex`: words=405 chars=3569. `./run-new.sh` завершился успешно; визуальная проверка первых страниц через `pdftoppm` подтвердила обновлённую верстку в `tmp/pdfs/review-page1-fixed.png` и `tmp/pdfs/supervisor-review-page1-fixed.png`.
+- Следующий рекомендуемый шаг: при необходимости можно тем же способом унифицировать и остальные служебные формы, если потребуется полностью одинаковое поведение верхнего блока во всём комплекте
