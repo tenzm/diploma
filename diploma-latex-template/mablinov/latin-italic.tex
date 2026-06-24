@@ -1,0 +1,62 @@
+\makeatletter
+\ifdefined\XeTeXinterchartokenstate
+    \XeTeXinterchartokenstate=1
+
+    \newXeTeXintercharclass\mablatinletters
+    \newXeTeXintercharclass\mablatincontinuation
+    \newcount\mabinterchartop
+
+    \ifdefined\e@alloc@intercharclass@top
+        \mabinterchartop=\e@alloc@intercharclass@top
+    \else
+        \ifdefined\XeTeXinterwordspaceshaping
+            \mabinterchartop=4095
+        \else
+            \mabinterchartop=255
+        \fi
+    \fi
+
+    \count@=`A
+    \loop
+        \XeTeXcharclass\count@=\mablatinletters
+        \ifnum\count@<`Z
+            \advance\count@ by 1
+    \repeat
+
+    \count@=`a
+    \loop
+        \XeTeXcharclass\count@=\mablatinletters
+        \ifnum\count@<`z
+            \advance\count@ by 1
+    \repeat
+
+    \count@=`0
+    \loop
+        \XeTeXcharclass\count@=\mablatincontinuation
+        \ifnum\count@<`9
+            \advance\count@ by 1
+    \repeat
+
+    \XeTeXcharclass45=\mablatincontinuation  % -
+    \XeTeXcharclass47=\mablatincontinuation  % /
+    \XeTeXcharclass58=\mablatincontinuation  % :
+    \XeTeXcharclass95=\mablatincontinuation  % _
+
+    \count@=0
+    \loop
+        \ifnum\count@=\mablatinletters\else
+            \ifnum\count@=\mablatincontinuation\else
+                \XeTeXinterchartoks\count@ \mablatinletters={\itshape}
+                \XeTeXinterchartoks\mablatinletters \count@={\upshape}
+                \XeTeXinterchartoks\mablatincontinuation \count@={\upshape}
+            \fi
+        \fi
+        \ifnum\count@<\mabinterchartop
+            \advance\count@ by 1
+    \repeat
+
+    \XeTeXinterchartoks\mablatincontinuation \mablatinletters={\itshape}
+
+    \expandafter\everypar\expandafter{\the\everypar\upshape}
+\fi
+\makeatother
