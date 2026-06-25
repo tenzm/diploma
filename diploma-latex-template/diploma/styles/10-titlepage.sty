@@ -115,6 +115,7 @@
 \@makeVariable{profileType}
 \@makeVariable{supervisorType}
 \@makeVariable{departmentType}
+\@makeVariable[empty]{departmentDisplay}
 
 
 \RequirePackage{fancyhdr}
@@ -156,7 +157,7 @@
     \fontsize{12pt}{16pt}\selectfont
     \noindent
     \textbf{Институт (Филиал)} \uline{\@faculty\hfill} \\
-    \textbf{\@departmentType} \uline{\@department\hfill} \\
+    \textbf{\@departmentType} \ifx\@departmentDisplay\@empty\uline{\@department\hfill}\else\expandafter\uline\expandafter{\expanded{\@departmentDisplay}\hfill}\fi \\
     \textbf{Группа} \uline{\@group} \textbf{Направление подготовки} \expandafter\uline\expandafter{\expanded{\@speciality}\hfill} \\
     \textbf{\@profileType} \uline{\@profile\hfill} \\
     \textbf{Квалификация:} \uline{\textbf{\@degree}\hfill}
@@ -205,7 +206,7 @@
 
     \medskip
 
-    \noindent \parbox[b]{0.4\textwidth}{\@headOfDepartmentTitle}\ \uline{\hfill \@headOfDepartment \hfill}\ \signature{2cm}
+    \noindent \parbox[b]{0.4\textwidth}{\raggedright\@headOfDepartmentTitle}\ \uline{\hfill \@headOfDepartment \hfill}\ \signature{2cm}
 
     \noindent \@workDate
 

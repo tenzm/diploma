@@ -27,7 +27,7 @@
     \fontsize{12pt}{14pt}\selectfont
     \setlength{\parskip}{0pt}
     \noindent\textbf{Институт~(Филиал)} \expandafter\uline\expandafter{\expanded{\@faculty}\hfill}\par
-    \noindent\textbf{Образовательный~центр~№} \uline{\@department\hfill}\par
+    \noindent\textbf{\@departmentType} \expandafter\uline\expandafter{\expanded{\@departmentDisplay}\hfill}\par
     \noindent\textbf{Группа } \uline{\@group}\hspace{0.8em}\textbf{\mbox{Направление~подготовки} }%
     \expandafter\uline\expandafter{\expanded{\@speciality}\hfill}\par
     \noindent\textbf{\@profileType} \uline{\@profile\hfill}\par
@@ -80,6 +80,14 @@
     position=below
 }
 
+\addto\captionsrussian{\renewcommand{\lstlistingname}{Листинг}}
+\renewcommand{\lstlistingname}{Листинг}
+\lstset{
+    captionpos=b,
+    abovecaptionskip=12pt,
+    belowcaptionskip=6pt
+}
+
 \captionsetup[table]{
     name=Таблица,
     font=gostcaptionfont,
@@ -98,7 +106,7 @@
 \titleformat{\structure}[hang]{\clearpage\fontsize{14pt}{14pt}\selectfont\bfseries\centering}{}{0pt}{}
 \titlespacing*{\structure}{0pt}{18pt}{12pt}
 
-\titleformat{\section}[block]{\fontsize{14pt}{14pt}\selectfont\bfseries\raggedright}{\thesection}{0.5em}{}
+\titleformat{\section}[block]{\fontsize{14pt}{14pt}\selectfont\bfseries\centering}{\thesection}{0.5em}{}
 \titlespacing*{\section}{0pt}{18pt}{12pt}
 
 \renewcommand*{\bibfont}{%
